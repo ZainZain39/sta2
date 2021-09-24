@@ -38,7 +38,8 @@ class DbMap extends Map {
 		}
 	}
 	get(key) {
-		return super.get(key) ?? (this.dbconfig?.initData ? {...this.dbconfig.initData} : undefined);
+		if(this.dbconfig?.initData && !super.has(key)) super.set(key, {...this.dbconfig.initData});
+		return super.get(key);
 	}
 	async set(key, value) {
 		if(this.canUseDB) await this.#put(key, value);

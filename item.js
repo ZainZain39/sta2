@@ -19658,7 +19658,7 @@ const ItemList =
         "Speed Up Energy": "260"
     },
     {
-        "Name": "Moonlight Z«×ri",
+        "Name": "Moonlight Zå°†ï¾—ri",
         "Type": "Light Footwear",
         "Unlock Prerequisite": "Moon Festival Mega Pack",
         "Research Scrolls": "---",
@@ -22921,7 +22921,7 @@ const ItemList =
         "Crafting Upgrade 1": "-20% Craft Time Reduction",
         "Crafts Needed": "110",
         "Crafting Upgrade 2": "-44 Iron Spent",
-        "Crafting Upgrade 3": "Blueprint: Br«¿singamen",
+        "Crafting Upgrade 3": "Blueprint: Brå°†ï½¿singamen",
         "Crafting Upgrade 4": "x1.25 Value Increase",
         "Crafting Upgrade 5": "Quality Chance x2",
         "Ascension Upgrade 1": "-7 Jewels Spent",
@@ -23018,7 +23018,7 @@ const ItemList =
         "Speed Up Energy": "\"2"
     },
     {
-        "Name": "Br«¿singamen",
+        "Name": "Brå°†ï½¿singamen",
         "Type": "Amulet",
         "Unlock Prerequisite": "---",
         "Research Scrolls": "85",

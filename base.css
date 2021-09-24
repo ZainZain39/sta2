@@ -32,14 +32,13 @@ body {
 	font-size: 1.6em;
 	margin: 0;
 	padding: 0;
-	user-select: none;
 	overflow-y: scroll;
 	background: var(--main-bg-color);
 	color: var(--main-color);
 }
 header {
 	font-size: 1.2rem;
-	padding: 10px 20px;
+	padding: 10px 15px;
 	box-sizing: border-box;
 	position: fixed;
 	top: 0;
@@ -47,14 +46,15 @@ header {
 	z-index: 1;
 	background: var(--header-bg-color);
 	color: var(--header-color);
+	user-select: none;
 }
 main {
 	font-size: 1.2rem;
-	padding: 10px 20px;
+	padding: 10px 15px;
 	box-sizing: border-box;
 }
 footer {
-	padding: 5px 20px;
+	padding: 5px 15px;
 	font-size: 1.2rem;
 	position: fixed;
 	bottom: 0;
@@ -63,6 +63,7 @@ footer {
 	background: var(--footer-bg-color);
 	color: var(--footer-color);
 	z-index: 1;
+	user-select: none;
 }
 
 [type="text"] {
@@ -171,6 +172,14 @@ footer >.showHover {
 }
 footer:hover >.showHover {
 	display: block;
+}
+
+.information {
+	background: #fff;
+	color: #333;
+	border-radius: 10px;
+	margin-top: 10px;
+	padding: 5px 10px;
 }
 
 .reject {

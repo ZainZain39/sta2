@@ -31,57 +31,29 @@ class GroupList extends HTMLElement {
 		div.classList.add("container");
 
 		div.appendChild(this.createHeader());
-		div.appendChild(this.createTitle());
 		list.split(",").forEach(v => {
 			div.appendChild(this.createItem(v));
 		});
 		this.root.appendChild(fragment);
 
+		this.root.querySelectorAll(".changeCheckItem").forEach(e => {
+			e.addEventListener("change", changeCheckItem)
+		});
+
+		this.root.querySelectorAll(".changeCheckType").forEach(e => {
+			e.addEventListener("change", changeCheckType)
+		});
+
 		const item_count = this.root.querySelectorAll(".item").length;
 		this.classList.toggle("reject", item_count == 0);
 	}
 	createHeader() {
-		const html_default = `
-			<div class="header">
-				<span>${this.group}</span>
-			</div>
-		`;
 		const LcalGroup = myApp.LocalStringMap.get(this.group) ?? this.group;
 		const html = {
 			formatStatus: `
 				<div class="header">
 					<span>${LcalGroup}</span>
 				</div>
-			`,
-			formatSell: `
-				<div class="header">
-					<span>${LcalGroup}</span>
-				</div>
-			`,
-			formatBuy: `
-				<div class="header">
-					<span>${LcalGroup}</span>
-				</div>
-			`,
-			formatCheckItem: `
-				<div class="header">
-					<span>${LcalGroup}</span>
-				</div>
-			`,
-			formatCheckType: `
-				<div class="header">
-					<span>${LcalGroup}</span>
-				</div>
-			`,
-		}
-		const tmplate = document.createElement("template");
-		tmplate.innerHTML = this.format in html ? html[this.format] : html_default;
-		return tmplate.content;
-	}
-	createTitle() {
-		const html_default = ``;
-		const html = {
-			formatStatus: `
 				<div class="title">
 					<span class="htier"></span>
 					<span class="hname">アイテム名</span>
@@ -93,6 +65,9 @@ class GroupList extends HTMLElement {
 				</div>
 			`,
 			formatSell: `
+				<div class="header">
+					<span>${LcalGroup}</span>
+				</div>
 				<div class="title">
 					<span class="htier"></span>
 					<span class="hname">アイテム名</span>
@@ -101,28 +76,62 @@ class GroupList extends HTMLElement {
 					<span class="hcost">コスト</span>
 					<span class="hvalue">追加販売価格</span>
 					<span class="henergy">追加販売エネ</span>
-					<span class="hcost">コスト</span>
+					<span class="hcost">還元率</span>
 					<span class="hsell">推奨販売方法</span>
 				</div>
 			`,
-			formatBuy: `
+			formatGemSell: `
+				<div class="header">
+					<span>${LcalGroup}</span>
+				</div>
 				<div class="title">
 					<span class="htier"></span>
 					<span class="hname">アイテム名</span>
 					<span class="hvalue">追加販売価格</span>
 					<span class="hvalue">追加販売コスト</span>
-					<span class="hvalue">仕入しきい値</span>
+					<span class="hvalue">純利益</span>
+					<span class="hvalue">推奨ゴールド価格</span>
+					<span class="hvalue">推奨ジェム価格</span>
+				</div>
+			`,
+			formatBuy: `
+				<div class="header">
+					<span>${LcalGroup}</span>
+				</div>
+				<div class="title">
+					<span class="htier"></span>
+					<span class="hname">アイテム名</span>
+					<span class="hvalue">追加販売価格</span>
+					<span class="hvalue">追加販売コスト</span>
+					<span class="hvalue">推奨仕入れ値</span>
+				</div>
+			`,
+			formatEnchantment: `
+				<div class="header">
+					<span>${LcalGroup}</span>
+				</div>
+				<div class="title">
+					<span class="htier"></span>
+					<span class="hname">アイテム名</span>
+					<span class="hvalue">エンチャント前</span>
+					<span class="hvalue">エンチャント後</span>
+					<span class="hvalue">増加額</span>
 				</div>
 			`,
 			formatCheckItem: `
+				<div class="header">
+					<span>${LcalGroup}</span>
+				</div>
 				<div class="title">
 					<span class="htier"></span>
 					<span class="hname">アイテム名</span>
 					<span class="hcheck">価格UP</span>
-					<span class="hdonate">寄付</span>
 				</div>
 			`,
 			formatCheckType: `
+				<div class="header">
+					<span>${LcalGroup}</span>
+				</div>
 				<div class="title">
 					<span class="hname">アイテム名</span>
 					<span class="hcheck2">追加料金<br>エネルギー -10%</span>
@@ -130,16 +139,23 @@ class GroupList extends HTMLElement {
 					<span class="hcheck2">全アイテム<br>追加料金 +1%</span>
 				</div>
 			`,
+			formatDefault: `
+				<div class="header">
+					<span>${this.group}</span>
+				</div>
+			`,
 		}
 		const tmplate = document.createElement("template");
-		tmplate.innerHTML = this.format in html ? html[this.format] : html_default;
+		tmplate.innerHTML = html[this.format in html ? this.format : "formatDefault"];
 		return tmplate.content;
 	}
 	createItem(key) {
 		const func = {
 			formatStatus: this.createItem_formatStatus,
 			formatSell: this.createItem_formatSell,
+			formatGemSell: this.createItem_formatGemSell,
 			formatBuy: this.createItem_formatBuy,
+			formatEnchantment: this.createItem_formatEnchantment,
 			formatCheckItem: this.createItem_formatCheckItem,
 			formatCheckType: this.createItem_formatCheckType,
 			formatXXX: this.createItem_formatXXX,
@@ -151,36 +167,20 @@ class GroupList extends HTMLElement {
 		}
 	}
 	createItem_formatStatus(key) {
-		let {
-			Tier, LocalName,
-			ATK, DEF, HP, EVA, CRIT,
-		} = myApp.ItemMap.get(key) ?? {};
-
+		const item = myApp.ItemMap.get(key);
 		const tmplate = document.createElement("template");
-
 		const status = selectStatus.value[0];
-		if(status === "ATK" && !ATK) return tmplate.content;
-		if(status === "DEF" && !DEF) return tmplate.content;
-		if(status === "HP" && !HP) return tmplate.content;
-		if(status === "EVA" && !EVA) return tmplate.content;
-		if(status === "CRIT" && !CRIT) return tmplate.content;
-
+		if(status != "on" && !(status in item)) return tmplate.content;
 		const qarity = switchQuality.value[0];
-		if(ATK) ATK = Math.ceil(ATK * StatusWeight[qarity]);
-		if(DEF) DEF = Math.ceil(DEF * StatusWeight[qarity]);
-		if(HP) HP = Math.ceil(HP * StatusWeight[qarity]);
-		EVA = EVA == 0.05 ? "5%" : EVA;
-		CRIT = CRIT == 0.05 ? "5%" : CRIT;
-
 		tmplate.innerHTML = tagLocalNumber`
-			<div class="item" title="${LocalName}">
-				<span class="tier">${Tier}</span>
-				<span class="name">${LocalName}</span>
-				<span class="status">${ATK ?? ""}</span>
-				<span class="status">${DEF ?? ""}</span>
-				<span class="status">${HP ?? ""}</span>
-				<span class="status">${EVA ?? ""}</span>
-				<span class="status">${CRIT ?? ""}</span>
+			<div class="item" title="${item.LocalName}">
+				<span class="tier">${item.Tier}</span>
+				<span class="name">${item.LocalName}</span>
+				<span class="status">${item.getATK[qarity]}</span>
+				<span class="status">${item.getDEF[qarity]}</span>
+				<span class="status">${item.getHP[qarity]}</span>
+				<span class="status">${item.getEVA}</span>
+				<span class="status">${item.getCRIT}</span>
 			</div>
 		`;
 		return tmplate.content;
@@ -189,59 +189,31 @@ class GroupList extends HTMLElement {
 		const AllValueUp = [...myApp.CheckTypeDbMap].filter(([k, v]) => v.AllValueUp).length;
 		const sMaxEnergy = $MaxEnergy.value;
 		const sDiscountThreshold = $DiscountThreshold.value;
-		const sSurchageThreshold = $SurchageThreshold.value;
-		const [MaxEnergy, DiscountThreshold, SurchageThreshold] = String2Number(sMaxEnergy, sDiscountThreshold, sSurchageThreshold);
-
-		let {
-			Tier, LocalName, Name, Type,
-			Value, IncreaseValue, DiscountEnergy, SurchargeEnergy, SurchargeEnergyCD
-		} = myApp.ItemMap.get(key) ?? {};
-		const CheckItem = myApp.CheckItemDbMap.get(Name);
-		const CheckType = myApp.CheckTypeDbMap.get(Type);
+		const sSurchargeThreshold = $SurchargeThreshold.value;
+		const [MaxEnergy, DiscountThreshold, SurchargeThreshold] = String2Number(sMaxEnergy, sDiscountThreshold, sSurchargeThreshold);
 
 		const qarity = switchQuality.value[0];
-		const NowValue = CheckItem?.ValueUp ? IncreaseValue : Value;
-		const RoundNowValue = RoundValue(NowValue * ValueWeight[qarity]);
-		let DiscountCost, SurchargeValue, NowSurchargeEnergy, SurchargeCost;
-		if(Type == "Runestone" || Type == "Moonstone" || Type == "Enchantment") {
-			DiscountEnergy = "---";
-			DiscountCost = "---";
-			SurchargeValue = "---";
-			NowSurchargeEnergy = "---";
-			SurchargeCost = "---";
-		} else {
-			DiscountCost = Math.floor(RoundNowValue / 2 / DiscountEnergy);
-			SurchargeValue = RoundNowValue * 2;
-			NowSurchargeEnergy = CheckType?.CostDown ? SurchargeEnergyCD : SurchargeEnergy;
-			SurchargeCost = Math.floor(RoundNowValue / NowSurchargeEnergy);
-		}
-		const sell = ValueWeight.map(weight => {
-			const RoundNowValue = RoundValue(NowValue * weight);
-			const SurchageValue = RoundNowValue * (2 + 0.01 * AllValueUp);
-			const DiscountCost = Math.floor(RoundNowValue / 2 / DiscountEnergy);
-			const NowSurchargeEnergy = CheckType?.CostDown ? SurchargeEnergyCD : SurchargeEnergy;
-			const SurchageCost = Math.floor((SurchageValue - RoundNowValue) / NowSurchargeEnergy);
 
-			let sell = "－";
-			if(DiscountCost <= DiscountThreshold) sell = "半";
-			if(SurchageCost >= SurchageThreshold && NowSurchargeEnergy <= MaxEnergy) sell = "倍";
-			return sell;
+		const item = myApp.ItemMap.get(key);
+		const sell = ["－", "－", "－", "－", "－"];
+		sell.forEach((_,i) => {
+			if(item.DiscountCost[i] <= DiscountThreshold) sell[i] = "半";
+			if(item.SurchargeCost[i] >= SurchargeThreshold && item.NowSurchargeEnergy <= MaxEnergy) sell[i] = "倍";
 		});
-		const cssValue = CheckItem?.ValueUp ? "value valueup" : "value";
-		const cssCost = CheckType?.CostDown ? "energy costdown" : "energy";
+		const cssValue = item.CheckItem.ValueUp ? "value valueup" : "value";
+		const cssCost = item.CheckType.CostDown ? "energy costdown" : "energy";
 
 		const tmplate = document.createElement("template");
-
 		tmplate.innerHTML = tagLocalNumber`
-			<div class="item" title="${LocalName}">
-				<span class="tier">${Tier}</span>
-				<span class="name" title="${LocalName}">${LocalName}</span>
-				<span class="${cssValue}">${RoundNowValue}</span>
-				<span class="energy">${DiscountEnergy}</span>
-				<span class="cost">${DiscountCost}</span>
-				<span class="value">${SurchargeValue}</span>
-				<span class="${cssCost}">${NowSurchargeEnergy}</span>
-				<span class="cost">${SurchargeCost}</span>
+			<div class="item" title="${item.LocalName}">
+				<span class="tier">${item.Tier}</span>
+				<span class="name">${item.LocalName}</span>
+				<span class="${cssValue}">${item.RoundNowValue[qarity]}</span>
+				<span class="energy">${item.DiscountEnergy}</span>
+				<span class="cost">${item.DiscountCost[qarity]}</span>
+				<span class="value">${item.SurchargeValue[qarity]}</span>
+				<span class="${cssCost}">${item.NowSurchargeEnergy}</span>
+				<span class="cost">${item.SurchargeCost[qarity]}</span>
 				<span class="sell quality0">${sell[0]}</span>
 				<span class="sell quality1">${sell[1]}</span>
 				<span class="sell quality2">${sell[2]}</span>
@@ -251,35 +223,86 @@ class GroupList extends HTMLElement {
 		`;
 		return tmplate.content;
 	}
+	createItem_formatGemSell(key) {
+		const AllValueUp = [...myApp.CheckTypeDbMap].filter(([k, v]) => v.AllValueUp).length;
+		const sMaxEnergy = $MaxEnergy.value;
+		const sDiscountThreshold = $DiscountThreshold.value;
+		const sSurchargeThreshold = $SurchargeThreshold.value;
+		const [MaxEnergy, DiscountThreshold, SurchargeThreshold] = String2Number(sMaxEnergy, sDiscountThreshold, sSurchargeThreshold);
+
+		const qarity = switchQuality.value[0];
+
+		const item = myApp.ItemMap.get(key);
+		const SurchargeCost = item.NowSurchargeEnergy * DiscountThreshold;
+		const gem = Math.ceil(Math.max(2, Math.max(0, item.SurchargeValue[qarity] - SurchargeCost) / 800000 / 0.8));
+		const getgem = Math.floor(gem * 0.8);
+
+		const tmplate = document.createElement("template");
+//		if(item.SurchargeValue[qarity] - SurchargeCost <= 0) return tmplate.content;
+		tmplate.innerHTML = tagLocalNumber`
+			<div class="item" title="${item.LocalName}">
+				<span class="tier">${item.Tier}</span>
+				<span class="name">${item.LocalName}</span>
+				<span class="value">${item.SurchargeValue[qarity]}</span>
+				<span class="value">${SurchargeCost}</span>
+				<span class="value">${item.SurchargeValue[qarity] - SurchargeCost}</span>
+				<span class="value">${Math.floor((item.SurchargeValue[qarity] - SurchargeCost) /0.9)}</span>
+				<span class="value">${gem}(${getgem})</span>
+			</div>
+		`;
+		return tmplate.content;
+	}
+	createItem_formatEnchantment(key) {
+		const sMaxEnergy = $MaxEnergy.value;
+		const sSurchargeThreshold = $SurchargeThreshold.value;
+		const [MaxEnergy, SurchargeThreshold] = String2Number(sMaxEnergy, sSurchargeThreshold);
+		const sElementValue = $ElementValue.value;
+		const sSpiritValue = $SpiritValue.value;
+		const [ElementValue, SpiritValue] = String2Number(sElementValue, sSpiritValue);
+
+		const item = myApp.ItemMap.get(key);
+
+		const qarity = switchQuality.value[0];
+		const tmplate = document.createElement("template");
+		if(ElementValue != 0 && item.EnchantedE) return tmplate.content;
+		if(SpiritValue != 0 && item.EnchantedS) return tmplate.content;
+		if(!(item.SurchargeCost[qarity] >= SurchargeThreshold && item.NowSurchargeEnergy <= MaxEnergy)) return tmplate.content;
+
+		const RoundEnchantValue = RoundValue(item.NowValue[qarity] + Math.min(item.NowValue[qarity], ElementValue) + Math.min(item.NowValue[qarity], SpiritValue));
+		const DiffValue = RoundEnchantValue - item.RoundNowValue[qarity];
+
+		tmplate.innerHTML = tagLocalNumber`
+			<div class="item" title="${item.LocalName}">
+				<span class="tier">${item.Tier}</span>
+				<span class="name" title="${item.LocalName}">${item.LocalName}</span>
+				<span class="value">${item.NowValue[qarity]}</span>
+				<span class="value">${RoundEnchantValue}</span>
+				<span class="value">${DiffValue}</span>
+			</div>
+		`;
+		return tmplate.content;
+	}
 	createItem_formatBuy(key) {
 		const AllValueUp = [...myApp.CheckTypeDbMap].filter(([k, v]) => v.AllValueUp).length;
 		const sMaxEnergy = $MaxEnergy.value;
 		const sDiscountThreshold = $DiscountThreshold.value;
-		const sSurchageThreshold = $SurchageThreshold.value;
-		const [MaxEnergy, DiscountThreshold, SurchageThreshold] = String2Number(sMaxEnergy, sDiscountThreshold, sSurchageThreshold);
+		const sSurchargeThreshold = $SurchargeThreshold.value;
+		const [MaxEnergy, DiscountThreshold, SurchargeThreshold] = String2Number(sMaxEnergy, sDiscountThreshold, sSurchargeThreshold);
 
-		let {
-			Tier, LocalName, Name, Type,
-			Value, IncreaseValue, DiscountEnergy, SurchargeEnergy, SurchargeEnergyCD
-		} = myApp.ItemMap.get(key) ?? {};
-		const CheckItem = myApp.CheckItemDbMap.get(Name);
-		const CheckType = myApp.CheckTypeDbMap.get(Type);
+		const item = myApp.ItemMap.get(key);
 
-		const NowValue = CheckItem?.ValueUp ? IncreaseValue : Value;
 		const qarity = switchQuality.value[0];
-		const RoundNowValue = RoundValue(NowValue * ValueWeight[qarity]);
-		const SurchageValue = Math.floor(RoundNowValue * (2 + 0.01 * AllValueUp));
-		const NowSurchargeEnergy = CheckType?.CostDown ? SurchargeEnergyCD : SurchargeEnergy;
-		const CostValue = NowSurchargeEnergy * DiscountThreshold;
-		const BuyValue = SurchageValue - CostValue;
-
+		const CostValue = item.NowSurchargeEnergy * DiscountThreshold;
+		const BuyValue = item.SurchargeValue[qarity] - CostValue;
 		const tmplate = document.createElement("template");
 
+		if(!(item.SurchargeCost[qarity] >= SurchargeThreshold && item.NowSurchargeEnergy <= MaxEnergy)) return tmplate.content;
+		if(BuyValue <= 0) return tmplate.content;
 		tmplate.innerHTML = tagLocalNumber`
-			<div class="item" title="${LocalName}">
-				<span class="tier">${Tier}</span>
-				<span class="name" title="${LocalName}">${LocalName}</span>
-				<span class="value">${SurchageValue}</span>
+			<div class="item" title="${item.LocalName}">
+				<span class="tier">${item.Tier}</span>
+				<span class="name" title="${item.LocalName}">${item.LocalName}</span>
+				<span class="value">${item.SurchargeValue[qarity]}</span>
 				<span class="value">${CostValue}</span>
 				<span class="value">${BuyValue}</span>
 			</div>
@@ -287,30 +310,16 @@ class GroupList extends HTMLElement {
 		return tmplate.content;
 	}
 	createItem_formatCheckItem(key) {
-		let {
-			Tier, LocalName, Name,
-		} = myApp.ItemMap.get(key) ?? {};
-		let {
-			ValueUp = false, Donation = [false, false, false, false, false],
-		} = myApp.CheckItemDbMap.get(Name) ?? {};
-		const checked_valueup = ValueUp ? " checked" : "";
-		const checked_donation0 = Donation[0] ? " checked" : "";
-		const checked_donation1 = Donation[1] ? " checked" : "";
-		const checked_donation2 = Donation[2] ? " checked" : "";
-		const checked_donation3 = Donation[3] ? " checked" : "";
-		const checked_donation4 = Donation[4] ? " checked" : "";
+		const item = myApp.ItemMap.get(key);
+
+		const checked_valueup = item.CheckItem.ValueUp ? " checked" : "";
 
 		const tmplate = document.createElement("template");
 		tmplate.innerHTML = tagLocalNumber`
-			<div class="item" title="${LocalName}">
-				<span class="tier">${Tier}</span>
-				<span class="name">${LocalName}</span>
-				<label class="check"><input type="checkbox" data--name="${Name}" data-key="ValueUp"${checked_valueup}></label>
-				<label class="donate quality0"><input type="checkbox" data--name="${Name}" data-key="Donation" data-i="0"${checked_donation0}></label>
-				<label class="donate quality1"><input type="checkbox" data--name="${Name}" data-key="Donation" data-i="1"${checked_donation1}></label>
-				<label class="donate quality2"><input type="checkbox" data--name="${Name}" data-key="Donation" data-i="2"${checked_donation2}></label>
-				<label class="donate quality3"><input type="checkbox" data--name="${Name}" data-key="Donation" data-i="3"${checked_donation3}></label>
-				<label class="donate quality4"><input type="checkbox" data--name="${Name}" data-key="Donation" data-i="3"${checked_donation4}></label>
+			<div class="item" title="${item.LocalName}">
+				<span class="tier">${item.Tier}</span>
+				<span class="name">${item.LocalName}</span>
+				<label class="check"><input type="checkbox" class="changeCheckItem" data--name="${item.Name}" data-key="ValueUp"${checked_valueup}></label>
 			</div>
 		`;
 		return tmplate.content;
@@ -328,9 +337,9 @@ class GroupList extends HTMLElement {
 		tmplate.innerHTML = tagLocalNumber`
 			<div class="item" title="${LocalType}">
 				<span class="type" title="${LocalType}">${LocalType}</span>
-				<label class="check2"><input type="checkbox" data--name="${Type}" data-key="CostDown"${checked_costdown}></label>
-				<label class="check2"><input type="checkbox" data--name="${Type}" data-key="TypeValueUp"${checked_typevalueup}></label>
-				<label class="check2"><input type="checkbox" data--name="${Type}" data-key="AllValueUp"${checked_allvalueup}></label>
+				<label class="check2"><input type="checkbox" class="changeCheckType" data--name="${Type}" data-key="CostDown"${checked_costdown}></label>
+				<label class="check2"><input type="checkbox" class="changeCheckType" data--name="${Type}" data-key="TypeValueUp"${checked_typevalueup}></label>
+				<label class="check2"><input type="checkbox" class="changeCheckType" data--name="${Type}" data-key="AllValueUp"${checked_allvalueup}></label>
 			</div>
 		`;
 		return tmplate.content;
@@ -346,6 +355,10 @@ class GroupList extends HTMLElement {
 	}
 }
 const css_grouplist = `
+label {
+	cursor: pointer;
+}
+
 .container {
 	background: #fff;
 	color: #000;
@@ -404,13 +417,8 @@ const css_grouplist = `
 	border-bottom: 1px dashed #000;
 	text-align: center;
 }
-.hdonate {
-	width: 145px;
-	border-bottom: 1px dashed #000;
-	text-align: center;
-}
 .hsell {
-	width: 150px;
+	width: 120px;
 	border-bottom: 1px dashed #000;
 	text-align: center;
 }
@@ -462,10 +470,6 @@ const css_grouplist = `
 }
 .check2 {
 	width: 100px;
-	text-align: center;
-}
-.donate {
-	width: 25px;
 	text-align: center;
 }
 .sell {

@@ -19,7 +19,6 @@ const setResizeObserver = () => {
 	const footerResizeObserver = new ResizeObserver(entries => {
 		document.querySelector("body").style.marginBottom = `${entries[0].target.offsetHeight}px`;
 		document.querySelector(".loading").style.bottom = `${entries[0].target.offsetHeight}px`;
-//		toTop.style.bottom = `${10 + entries[0].target.offsetHeight}px`;
 	});
 	footerResizeObserver.observe(document.querySelector('footer'));
 }
@@ -28,23 +27,19 @@ const setupData = async () => {
 	const init_para = [
 		["MaxEnergy", "3,000"],
 		["DiscountThreshold", "500"],
-		["SurchageThreshold", "800"],
+		["SurchargeThreshold", "800"],
 	];
 	const dbconfig1 = new DbConfig().setStore("para");
 	myApp.ParaDbMap = await new DbMap(init_para).setDbConfig(dbconfig1);
 	$MaxEnergy.value = myApp.ParaDbMap.get("MaxEnergy");
 	$DiscountThreshold.value = myApp.ParaDbMap.get("DiscountThreshold");
-	$SurchageThreshold.value = myApp.ParaDbMap.get("SurchageThreshold");
+	$SurchargeThreshold.value = myApp.ParaDbMap.get("SurchargeThreshold");
 
 	const init_checkitem = {
 		ValueUp: false,
-		Donate: [false, false, false, false, false],
 	}
 	const dbconfig2 = new DbConfig().setStore("CheckItem").setInit(init_checkitem);
 	myApp.CheckItemDbMap = await new DbMap().setDbConfig(dbconfig2);
-//	const test = myApp.CheckItemDbMap.get("Squire Sword");
-//	test.ValueUp = true;
-//	myApp.CheckItemDbMap.set("Squire Sword", test);
 
 	const init_checktype = {
 		CostDown: false,
@@ -66,18 +61,100 @@ const setupData = async () => {
 		v.EnchantedS = EnchantedSMap.has(k);
 		myApp.ItemMap.set(k, new ItemObject(v));
 	});
-//	const check = myApp.ItemMap.get("Squire Sword");
-//	console.log(check, check.NowValue);
 }
 
 class ItemObject {
 	constructor(e) {
 		Object.entries(e).forEach(([k, v]) => this[k] = v);
-		Object.entries(myApp.CheckItemDbMap.get(this.Name)).forEach(([k, v]) => this[k] = v);
-		Object.entries(myApp.CheckTypeDbMap.get(this.Type)).forEach(([k, v]) => this[k] = v);
+		this.CheckItem = myApp.CheckItemDbMap.get(this.Name);
+		this.CheckType = myApp.CheckTypeDbMap.get(this.Type);
 	}
 	get NowValue() {
-		return this.ValueUp ? this.IncreaseValue : this.Value;
+		const temp = this.CheckItem.ValueUp ? this.IncreaseValue : this.Value;
+		return [
+			temp * ValueWeight[0],
+			temp * ValueWeight[1],
+			temp * ValueWeight[2],
+			temp * ValueWeight[3],
+			temp * ValueWeight[4],
+		];
+	}
+	get RoundNowValue() {
+		return [
+			RoundValue(this.NowValue[0]),
+			RoundValue(this.NowValue[1]),
+			RoundValue(this.NowValue[2]),
+			RoundValue(this.NowValue[3]),
+			RoundValue(this.NowValue[4]),
+		];
+	}
+	get DiscountCost() {
+		return [
+			Math.floor(this.RoundNowValue[0] / 2 / this.DiscountEnergy),
+			Math.floor(this.RoundNowValue[1] / 2 / this.DiscountEnergy),
+			Math.floor(this.RoundNowValue[2] / 2 / this.DiscountEnergy),
+			Math.floor(this.RoundNowValue[3] / 2 / this.DiscountEnergy),
+			Math.floor(this.RoundNowValue[4] / 2 / this.DiscountEnergy),
+		];
+	}
+	get SurchargeValue() {
+		return [
+			this.RoundNowValue[0] * 2,
+			this.RoundNowValue[1] * 2,
+			this.RoundNowValue[2] * 2,
+			this.RoundNowValue[3] * 2,
+			this.RoundNowValue[4] * 2,
+		];
+	}
+	get NowSurchargeEnergy() {
+		return this.CheckType.CostDown ? this.SurchargeEnergyCD : this.SurchargeEnergy;
+	}
+	get SurchargeCost() {
+		return [
+			Math.floor(this.RoundNowValue[0] / this.NowSurchargeEnergy),
+			Math.floor(this.RoundNowValue[1] / this.NowSurchargeEnergy),
+			Math.floor(this.RoundNowValue[2] / this.NowSurchargeEnergy),
+			Math.floor(this.RoundNowValue[3] / this.NowSurchargeEnergy),
+			Math.floor(this.RoundNowValue[4] / this.NowSurchargeEnergy),
+		];
+	}
+	get getATK() {
+		if(!("ATK" in this)) return ["", "", "", "", ""];
+		return [
+			Math.round(this.ATK * StatusWeight[0]),
+			Math.round(this.ATK * StatusWeight[1]),
+			Math.round(this.ATK * StatusWeight[2]),
+			Math.round(this.ATK * StatusWeight[3]),
+			Math.round(this.ATK * StatusWeight[4]),
+		];
+	}
+	get getDEF() {
+		if(!("DEF" in this)) return ["", "", "", "", ""];
+		return [
+			Math.round(this.DEF * StatusWeight[0]),
+			Math.round(this.DEF * StatusWeight[1]),
+			Math.round(this.DEF * StatusWeight[2]),
+			Math.round(this.DEF * StatusWeight[3]),
+			Math.round(this.DEF * StatusWeight[4]),
+		];
+	}
+	get getHP() {
+		if(!("HP" in this)) return ["", "", "", "", ""];
+		return [
+			Math.round(this.HP * StatusWeight[0]),
+			Math.round(this.HP * StatusWeight[1]),
+			Math.round(this.HP * StatusWeight[2]),
+			Math.round(this.HP * StatusWeight[3]),
+			Math.round(this.HP * StatusWeight[4]),
+		];
+	}
+	get getEVA() {
+		if(!("EVA" in this)) return "";
+		return this.EVA === 0.05 ? "5%" : EVA;
+	}
+	get getCRIT() {
+		if(!("CRIT" in this)) return "";
+		return this.CRIT === 0.05 ? "5%" : CRIT;
 	}
 }
 
@@ -204,20 +281,29 @@ const setDragEvent = () => {
 		drag.classList.remove("drag");
 	}
 	document.querySelectorAll(".drag-and-drop").forEach(e => e.addEventListener("mousedown", mdown));
-//	document.querySelector(".filter").addEventListener("mousedown", e => e.stopPropagation());
 }
 
 const setEvent = () => {
-//	document.querySelector("footer").addEventListener("click", () => document.querySelector(".filter-overlay").classList.remove("reject"));
-//	document.querySelector(".filter-overlay").addEventListener("click", e => document.querySelector(".filter-overlay").classList.add("reject"));
-//	document.querySelector(".filter").addEventListener("click", e => e.stopPropagation());
-
 	document.querySelectorAll(".changeList").forEach(e => {
 		e.addEventListener("changed", () => {
 			const targetTier = filterTier.value;
-			const targetType = filterRack.value
-				.filter(v => filterJob.value.includes(v));
-			showFilterTier.setAttribute("select", targetTier);
+			const targetType = filterRack.value;
+			showFilterType.setAttribute("select", targetType);
+
+			document.querySelectorAll(".targetList").forEach(e => {
+				const key = e.getAttribute("key");
+				const group = e.getAttribute("group");
+				const list = [...myApp.ItemMap.values()]
+					.filter(filterProp(key, group))
+					.filter(filterProp("Tier", targetTier))
+					.filter(filterProp("Type", targetType))
+					.map(getProp("Name"));
+				e.setAttribute("list", list);
+			});
+		});
+		e.addEventListener("change", () => {
+			const targetTier = filterTier.value;
+			const targetType = filterRack.value;
 			showFilterType.setAttribute("select", targetType);
 
 			document.querySelectorAll(".targetList").forEach(e => {
@@ -250,7 +336,7 @@ const setEvent = () => {
 		bubbles: true,
 		composed: true,
 	});
-	filterRack.dispatchEvent(event);
+	filterTier.dispatchEvent(event);
 
 	document.querySelectorAll(".changeView").forEach(e => {
 		e.addEventListener("changed", e => {
@@ -267,7 +353,6 @@ const setEvent = () => {
 		});
 	});
 	selectView.dispatchEvent(event);
-
 
 	document.querySelectorAll(".changeFormat").forEach(e => {
 		e.addEventListener("changed", e => {
@@ -287,6 +372,22 @@ const setEvent = () => {
 	toTop.addEventListener("click", () => {
 		window.scroll({top: 0, behavior: "smooth"});
 	});
+}
+
+const changeCheckItem = async e => {
+	const me = e.currentTarget;
+	const {Name, key} = me.dataset;
+	const checkitem = myApp.CheckItemDbMap.get(Name);
+	checkitem[key] = me.checked;
+	await myApp.CheckItemDbMap.set(Name, checkitem);
+}
+
+const changeCheckType = async e => {
+	const me = e.currentTarget;
+	const {Name, key} = me.dataset;
+	const checktype = myApp.CheckTypeDbMap.get(Name);
+	checktype[key] = me.checked;
+	await myApp.CheckTypeDbMap.set(Name, checktype);
 }
 
 const EnchantedE = `
@@ -952,7 +1053,6 @@ Alimyriad	アリミリャド
 Freyja's Talisman	フレイヤのお守り
 VIP Talisman	VIPのお守り
 Brísingamen	ブリーシンガメン
-Br鱈singamen	ブリーシンガメン
 Monsoon Heart	モンスーンの床（ハート模様）
 Chipped Runestone	欠けた石
 Flawed Runestone	不完全な石
@@ -1021,4 +1121,9 @@ Dogbone Blaster	ドッグボーン・ブラスター
 Canid Helmet	イヌのヘルメット
 Canid Paws	イヌの肉球
 Canid Plate	イヌのプレート
+Tsukuyomi	ツクヨミ
+Moonlight Wand	月光のワンド
+Moonlight Kimono	月光の着物
+Moonlight Z将ﾗri	月光の草履
+Br将ｿsingamen	ブリーシンガメン
 `;

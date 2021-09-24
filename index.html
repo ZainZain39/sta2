@@ -28,10 +28,10 @@
 	<toggle-button id="selectFormat" class="changeFormat">
 		<radio-button value="formatStatus" checked>ステータス閲覧</radio-button>
 		<radio-button value="formatSell">販売補助</radio-button>
-		<radio-button value="formatGemSell">ジェム販売補助</radio-button>
+		<radio-button value="formatGemSell">マーケット販売補助</radio-button>
 		<radio-button value="formatBuy">仕入補助</radio-button>
-		<radio-button value="formatEnchant">エンチャント補助</radio-button>
-		<radio-button value="formatCheckItem">開発・寄付進捗管理</radio-button>
+		<radio-button value="formatEnchantment">エンチャント補助</radio-button>
+		<radio-button value="formatCheckItem">開発進捗管理</radio-button>
 	</toggle-button>
 </div>
 </div>
@@ -41,7 +41,7 @@
 <main class="reject">
 
 <div class="targetView viewItem">
-<div class="targetFormat formatStatus formatSell formatGemSell formatBuy formatEnchant">
+<div class="targetFormat formatStatus formatSell formatGemSell formatBuy formatEnchantment">
 <div class="flex gap10 mb5">
 	<toggle-button id="switchQuality" class="changeList">
 		<radio-button class="quality0" value="0" checked>普通</radio-button>
@@ -62,7 +62,7 @@
 	</toggle-button>
 	</div>
 
-	<div class="targetFormat formatSell formatGemSell formatBuy formatEnchant">
+	<div class="targetFormat formatSell formatGemSell formatBuy formatEnchantment">
 	<toggle-button id="switchEvent" class="changeList">
 		<radio-button value="event0" checked>イベントなし</radio-button>
 		<radio-button value="event1">お買い得 追加料金 +25%</radio-button>
@@ -74,30 +74,30 @@
 </div>
 
 <div class="targetView viewItem">
-<div class="targetFormat formatSell formatGemSell formatBuy formatEnchant">
+<div class="targetFormat formatSell formatGemSell formatBuy formatEnchantment">
 <div class="flex gap10 mb5">
 	<label>
 		<span class="info">最大エネルギー：</span>
 		<input type="text" id="$MaxEnergy" class="changeList" data-para="MaxEnergy" size="5">
 	</label>
 	<label>
-		<span class="info">割引販売しきい値：</span>
+		<span class="info">割引コスト上限値：</span>
 		<input type="text" id="$DiscountThreshold" class="changeList" data-para="DiscountThreshold" size="5">
 	</label>
 	<label>
-		<span class="info">追加料金販売しきい値：</span>
-		<input type="text" id="$SurchageThreshold" class="changeList" data-para="SurchageThreshold" size="5">
+		<span class="info">追加販売還元率下限値：</span>
+		<input type="text" id="$SurchargeThreshold" class="changeList" data-para="SurchargeThreshold" size="5">
 	</label>
 </div>
 </div>
 </div>
 
 <div class="targetView viewItem">
-<div class="targetFormat formatEnchant">
+<div class="targetFormat formatEnchantment">
 <div class="flex gap10 mb5">
 	<label>
 		<span class="info">エレメント付与：</span>
-		<select id="$ElementValue" class="changeView">
+		<select id="$ElementValue" class="changeList">
 			<option value="0">未選択</option>
 			<option value="350000" selected>ティア９のエレメント</option>
 			<option value="105000">7.火のエレメント(火)</option>
@@ -116,7 +116,7 @@
 	</label>
 	<label>
 		<span class="info">精霊付与：</span>
-		<select id="$SpiritValue" class="changeView">
+		<select id="$SpiritValue" class="changeList">
 			<option value="0">未選択</option>
 			<option value="350000" selected>ティア９の精霊</option>
 			<option value="110000">7.サイの精霊</option>
@@ -138,22 +138,80 @@
 </div>
 
 <div class="targetView viewItem">
-<div class="targetFormat formatCheckItem">
-<div class="gap10 mb5">
-	<toggle-button id="selectDonate" class="changeList">
-		<radio-button checked>すべて表示</radio-button>
-		<radio-button class="quality0" value="Donated0">普通<br>未寄付表示</radio-button>
-		<radio-button class="quality1" value="Donated1">上級<br>未寄付表示</radio-button>
-		<radio-button class="quality2" value="Donated2">上質<br>未寄付表示</radio-button>
-		<radio-button class="quality3" value="Donated3">エピック<br>未寄付表示</radio-button>
-		<radio-button class="quality4" value="Donated4">レジェンド<br>未寄付表示</radio-button>
-	</toggle-button>
-</div>
-</div>
-</div>
-
-<div class="targetView viewItem">
 	<div id="$viewItem" class="flex gap10"></div>
+	<div class="targetFormat formatStatus">
+		<div class="information">
+		ヒーローの装備をグレードアップする際に「防御付きの剣って何があったっけ？」などの悩みを解消する機能<br>
+		エンチャント後のステータスも表示できるようにしたい<br>
+		</div>
+	</div>
+	<div class="targetFormat formatSell">
+		<div class="information">
+		販売価格と割引時の獲得エネルギー、追加販売時の消費エネルギーから、アイテムをどう販売するのが得か判定する機能<br>
+		推奨販売方法の欄の背景色は品質を表し、"半"は割引推奨、"倍"は追加販売推奨を表す<br>
+		ただし品質が上がればマーケット販売したほうが良いこともあるのでその辺は自己判断でお願いします<br>
+		（私は商人レベル上げのため基本的にはNPC販売で、ジェムになりそうなものだけマーケット販売してます）<br>
+		<br>
+		きちんと計算させるために先に[開発進捗管理][進化進捗管理]で情報を入力してください<br>
+		[最大エネルギー]にはあなたのお店の最大エネルギを入力<br>
+		[割引コスト上限値]には普段割引しているアイテムのコストを入力<br>
+		[追加販売還元率下限値]には普段追加販売しているアイテムの還元率を入力<br>
+		<br>
+		計算式<br>
+		　コスト＝（価格÷２）÷割引時獲得エネルギー　　※要するに１エネルギーを獲得するのに支払うゴールド<br>
+		　還元率＝追加販売価格÷追加販売消費エネルギー　※要するに１エネルギーで獲得するゴールド<br>
+		<br>
+		一覧を見ればティア10は還元率が悪く儲からないので追加販売するべきではないことがわかる<br>
+		なお黄金製品は非常に還元率が良いので、追加販売できるだけ最大エネルギーを高め、価格アップまで開発を頑張ってから売るのが儲けるコツ<br>
+		<br>
+		注意というか言い訳<br>
+		ゲーム内ではエレメントタイタンなどを取得すると「全アイテムの追加料金の値＋１％」と説明されているが、計算値とゲーム値が一致しない<br>
+		公式サイトのスプレッドシートに正しく計算する元ネタもないため多少誤差がありますがご了承ください<br>
+		</div>
+	</div>
+	<div class="targetFormat formatGemSell">
+		<div class="information">
+		アイテムをマーケットで売るならいくらで売れば得か判定してくれる機能<br>
+		<br>
+		基本となるのは追加販売の価格で、それから追加販売コストを引いたものが純利益となる<br>
+		追加販売コスト＝追加販売エネルギー×エネルギーを貯めるために使用したコストなので下記の計算式となる<br>
+		<br>
+		計算式<br>
+		Ａ：追加販売価格－（追加販売エネルギー×割引コスト）＝NPC販売の純利益<br>
+		<br>
+		マーケットでゴールド売りする場合は手取りがＡ以上ならば得ということになる<br>
+		ジェム売りする場合は純利益を下記の計算式でジェム換算する<br>
+		<br>
+		計算式<br>
+		Ｂ：Ａ÷ジェムゴールド換算率＝ジェム換算した純利益<br>
+		<br>
+		例えば上質なボーパルの剣をNPCに売る場合、追加販売価格700万から追加販売コスト100万程度を引いたおよそ600万が純利益となる<br>
+		※価格アップおよび剣ラーナー取得を想定<br>
+		マーケットでゴールド販売するなら手数料10%を考慮して670万以上で売れば儲けとなり、ジェム販売なら600万÷80万＝7.5で繰り上げて8ジェムを手数料20%考慮の10ジェムで売れれば儲けとなる<br>
+		（マーケット掲示期間を長くすると手数料率も上がるので要注意）<br>
+		（他者リクエストへの応答であれば手数料不要なので600万または8ジェムで売ればよい）<br>
+		<br>
+		た　だ　し　！<br>
+		マーケット販売には商人経験値が入手できないという大きなデメリットがあるので注意<br>
+		このゲームは"商人レベル イズ パワー"であり"ジェム イズ パワー"でもある<br>
+		大いに悩もう<br>
+		<br>
+		以下は独り言<br>
+		低ティア品は割引販売でエネルギーにするのが定石なので、そのあたりを考慮した一覧になるよう検討中<br>
+		わざわざエネルギー品を買わなくても自作すれば良いだけなので一覧から除外するか価格を非表示にするか…<br>
+		</div>
+	</div>
+	<div class="targetFormat formatEnchantment">
+		<div class="information">
+		エンチャント後の価格はどれも同じではなく、価格に対し丸め処理が入るのでそれを可視化する機能<br>
+		（高ティア品に低ティアエンチャすると価格上昇なくなったりする）<br>
+		<br>
+		以下は独り言<br>
+		今はエンチャント前の状態で追加販売対象品だけリストアップされてる<br>
+		エンチャント後の状態で追加販売対象となるものも表示されるように修正したいところ<br>
+		前のバージョンみたいにプラスマイナス表記で文字色変えたいけどいじり過ぎてこんな簡単な修正もできてない…<br>
+		</div>
+	</div>
 </div>
 
 <div class="targetView viewCheckType">
@@ -161,142 +219,28 @@
 </div>
 
 <div class="targetView viewHero">
-	<div id="$viewHero" class="">仕様検討中...</div>
+	<div id="$viewHero" class="information">
+		<div class="information">
+		ヒーローごとの装備品およびエンチャント情報と換装予定を管理する機能（にする予定）<br>
+		全然インタフェースのイメージが沸いてこないので頓挫中…<br>
+		</div>
+	</div>
 </div>
 
 <div class="targetView viewInformation">
-	<div id="$viewInformation" class="">
-	はじめに<br>
-	このツールはショップタイタンでアイテム販売を行う際のあれこれを補助する目的で作成しました<br>
-	「このティア10の上級って半額売り？倍額売り？」「このアイテム融合予定だったかな？コレクション確認しなきゃ」といった悩みを解決します<br>
+	<div id="$viewInformation" class="information">
+	2021/09/24 機能見直しおよび内部処理大幅改造<br>
 	<br>
-	なお個人利用のため作ったものを気まぐれでアップしているだけなので勝手に拡散するのはおやめください<br>
-	諸事情により急遽公開を中止する可能性があることもご了承ください<br>
-	このツールの結果に従った結果、損失が出たとしても責任はとりません<br>
-	鵜呑みにせず自分でも計算してみてくださいね（そしてバグがあれば教えてください）<br>
+	とりあえず見た目のイメージだけできたのでアップ<br>
+	それなりに動くけどタイプ別価格アップの対応やらイベント対応やらが未実装なので値は信用しないでね<br>
 	<br>
-	販売補助について<br>
-	NPC販売の割引販売・追加料金販売のエネルギー換算率を判定しお得な販売方法を表示します<br>
-	凡例）‐：通常販売推奨　半：割引販売推奨　倍：追加料金販売推奨　王：王様献上品<br>
-	※赤字表示は未寄付アイテムです　品質が上のものが赤字の場合は融合すべきか検討してください<br>
-	※最大エネルギーが追加販売に必要なエネルギーに足りていないものは"‐"表記となります<br>
-	※マーク部分をクリックすると"？"表記となります<br>
-	　マーケット売りしたほうが得になりそうなものにチェックしてください<br>
-	　もう一度クリックすると解除されます<br>
-	<br>
-	仕入補助について<br>
-	マーケットでアイテムを仕入れる際に損をしない仕入れ値を計算して表示します<br>
-	わざわざ仕入れたものは追加料金販売をすると思いますのでエネルギー換算率の低いものは表示対象外です<br>
-	追加料金販売金額から追加販売に必要なコストを引いているのでこれ以下で仕入れれば損はしないはず<br>
-	<br>
-	付与補助について<br>
-	アイテムにエンチャントした際の価格変化を表示します<br>
-	黒字はエンチャント後の金額がエンチャント価格と同じもの、赤字はそれより増額、赤字はそれより減額です<br>
-	グレイ表記は倍売りできない、または換算率の悪いものです<br>
-	<br>
-	取り急ぎ実装しましたのでバグなどありましたら報告してください<br>
-	<br>
-	開発進捗・寄付管理について<br>
-	各アイテムの開発進捗と寄付状況を管理します<br>
-	チェックを付けると販売補助や仕入補助の計算値がそれを考慮したものとなります<br>
-	お気に入りは未寄付品は販売補助で赤字表示されるところ<br>
-	<br>
-	進化進捗管理について<br>
-	進化の軌跡を管理します<br>
-	チェックを付けると販売補助や仕入補助の計算値がそれを考慮したものとなります<br>
-	と言いたいところですけど実は種類ごとの価格アップ対応できてません<br>
-	そこまで進化を進めた種類がないので検証できないんです<br>
-	タイタンの全価格１％アップと同じように単純に販売価格に倍率含めて計算すればいいのかな？<br>
-	タイタン２つ、種類別価格アップ１つなら追加料金販売金額は販売金額×(2＋0.02＋0.05）?<br>
-	<br>
-	今後の構想について<br>
-	・販売補助にエンチャントしたときの価格変化対応機能<br>
-	・"？"表記を別表で一覧表示して、マーケット売りの"マ"、ジェム売りの"Ｇ"などに表記を切り替える機能<br>
-	・仕入補助に別の仕入ロジックへの表示切替機能（アイディア求む）<br>
-	　単純に追加料金販売金額への表示切替機能もあったほうが良い？<br>
-	・起動時に表示がガツンと切り替わるところや初回表示の重さをなんとかしたいところ<br>
-	<br>
-	更新履歴<br>
-	2021/07/24 こっそり公開開始<br>
-	2021/07/25 説明ページを新設、付与補助機能の実装、細かい修正をいくつか<br>
+	寄付状況管理機能はゲームインタフェースの改善によりお役御免かなと削除してみた<br>
 	</div>
 </div>
 </main>
 
-<!--
-<div class="filter-overlay reject">
-<navi class="filter">
-	<div>ティア</div>
-	<toggle-button id="filterTier" class="changeList">
-		<reset-button checked>リセット</reset-button>
-		<check-button value="1">１</check-button>
-		<check-button value="2">２</check-button>
-		<check-button value="3">３</check-button>
-		<check-button value="4">４</check-button>
-		<check-button value="5">５</check-button>
-		<check-button value="6">６</check-button>
-		<check-button value="7">７</check-button>
-		<check-button value="8">８</check-button>
-		<check-button value="9">９</check-button>
-		<check-button value="10">10</check-button>
-		<check-button value="11">11</check-button>
-	</toggle-button>
-
-	<div class="mt5">職業</div>
-	<toggle-button id="filterJob" class="changeList">
-		<reset-button class="gray" title="絞り込みなし" checked>*</reset-button>
-		<radio-button class="red" value="Sword,Mace,Dagger,Heavy Armor,Gauntlets,Heavy Footwear,Potion,Shield" title="Sword,Mace,Dagger&#0010Heavy Armor&#0010Gauntlets&#0010Heavy Footwear&#0010Potion&#0010Shield">ソルジャー<br>(マーセナリー)</radio-button>
-		<radio-button class="red" value="Sword,Mace,Dagger,Spear,Heavy Armor,Gauntlets,Heavy Footwear,Potion,Shield" title="Sword,Mace,Dagger,Spear&#0010Heavy Armor&#0010Gauntlets&#0010Heavy Footwear&#0010Potion&#0010Shield">(ソルジャー)<br>マーセナリー</radio-button>
-		<radio-button class="red" value="Sword,Axe,Spear,Mace,Helmet,Gauntlets,Heavy Footwear,Potion,Herbal Medicine" title="Sword,Axe,Spear,Mace&#0010Helmet&#0010Gauntlets&#0010Heavy Footwear&#0010Potion&#0010Herbal Medicine">バーバリアン<br>(族長)</radio-button>
-		<radio-button class="red" value="Sword,Axe,Spear,Mace,Helmet,Gauntlets,Heavy Footwear,Potion,Herbal Medicine,Shield" title="Sword,Axe,Spear,Mace&#0010Helmet&#0010Gauntlets&#0010Heavy Footwear&#0010Potion&#0010Herbal Medicine,Shield">(バーバリアン)<br>族長</radio-button>
-		<radio-button class="red" value="" title="">ナイト<br>(ロード)</radio-button>
-		<radio-button class="red" value="" title="">(ナイト)<br>ロード</radio-button>
-		<radio-button class="red" value="" title="">レンジャー<br>ウォーデン</radio-button>
-		<radio-button class="red" value="" title="">サムライ<br>ダイミョウ</radio-button>
-		<radio-button class="red" value="" title="">狂戦士<br>(ヤール)</radio-button>
-		<radio-button class="red" value="" title="">(狂戦士)<br>ヤール</radio-button>
-
-		<radio-button class="green" value="" title="">シーフ<br>(トリックスター)</radio-button>
-		<radio-button class="green" value="" title="">(シーフ)<br>トリックスター</radio-button>
-		<radio-button class="green" value="" title="">モンク<br>グランドマスター</radio-button>
-		<radio-button class="green" value="" title="">銃士<br>(コンキスタドール)</radio-button>
-		<radio-button class="green" value="" title="">(銃士)<br>コンキスタドール</radio-button>
-		<radio-button class="green" value="Axe,Dagger,Gun,Light Armor,Rogue Hat,Gloves,Herbal Medicine,Amulet" title="Axe,Dagger,Gun&#0010Light Armor&#0010Rogue Hat&#0010Gloves&#0010Herbal Medicine&#0010Amulet">ワンダラー<br>パスファインダー</radio-button>
-		<radio-button class="green" value="Sword,Dagger,Bow,Light Armor,Rogue Hat,Gloves,Light Footwear,Ring" title="">忍者<br>センセイ</radio-button>
-		<radio-button class="green" value="Dagger,Bow,Wand,Crossbow,Light Armor,Rogue Hat,Gloves,Light Footwear,Ring,Amulet" title="">踊り子<br>軽業師</radio-button>
-
-		<radio-button class="blue" value="Wand,Staff,Crossbow,Clothes,Magician Hat,Light Footwear,Spell,Ring" title="Wand,Staff,Crossbow&#0010Clothes&#0010Magician Hat&#0010Light Footwear&#0010Spell&#0010Ring">メイジ<br>アークメイジ</radio-button>
-		<radio-button class="blue" value="Mace,Spear,Wand,Clothes,Magician Hat,Light Footwear,Spell,Shield, title="Mace,Spear,Wand&#0010Clothes&#0010Magician Hat&#0010Light Footwear&#0010Spell&#0010Shield">クレリック<br>(ビショップ)</radio-button>
-		<radio-button class="blue" value="Mace,Spear,Wand,Clothes,Magician Hat,Light Footwear,Spell,Shield,Ring" title="Mace,Spear,Wand&#0010Clothes&#0010Magician Hat&#0010Light Footwear&#0010Spell&#0010Shield,Ring">(クレリック)<br>ビショップ</radio-button>
-		<radio-button class="blue" value="Bow,Wand,Staff,Clothes,Herbal Medicine,Amulet,Spell" title="Bow,Wand,Staff&#0010Clothes&#0010Herbal Medicine&#0010Herbal Medicine&#0010Amulet&#0010Spell">ドルイド<br>(アークドルイド)</radio-button>
-		<radio-button class="blue" value="Bow,Wand,Staff,Clothes,Herbal Medicine,Amulet,Ring,Spell" title="Bow,Wand,Staff&#0010Clothes&#0010Herbal Medicine&#0010Herbal Medicine&#0010Amulet,Ring&#0010Spell">(ドルイド)<br>アークドルイド</radio-button>
-		<radio-button class="blue" value="Dagger,Wand,Staff,Clothes,Gloves,Light Footwear,Spell" title="Dagger,Wand,Staff&#0010Clothes&#0010Gloves&#0010Light Footwear&#0010Spell&#0010Spell">ソーサラー<br>ウォーロック</radio-button>
-		<radio-button class="blue" value="Sword,Axe,Bow,Staff,Heavy Armor,Light Armor,Clothes,Helmet,Magician Hat,Gauntlets,Gloves,Heavy Footwear,Light Footwear,Potion,Spell,Ring,Amulet,Herbal Medicine,Shield,Spell" title="Sword,Axe,Bow,Staff&#0010Heavy Armor,Light Armor,Clothes&#0010Helmet,Magician Hat,Gauntlets,Gloves&#0010Heavy Footwear,Light Footwear&#0010Potion,Spell,Ring,Amulet&#0010Herbal Medicine,Shield,Spell,Ring,Amulet">スペルブレイド<br>スペルナイト</radio-button>
-		<radio-button class="blue" value="Mace,Wand,Staff,Clothes,Magician Hat,Gloves,Spell,Herbal Medicine,Shield" title="Mace,Wand,Staff&#0010Clothes&#0010Magician Hat&#0010Gloves&#0010Spell&#0010Herbal Medicine,Shield">風水師<br>アストラマンサー</radio-button>
-	</toggle-button>
-
-	<div class="mt5">収納</div>
-	<toggle-button id="filterRack" class="changeList" format="icon">
-		<reset-button checked><img src="./image/All.png"></reset-button>
-		<radio-button value="Sword,Axe,Mace,Spear,Staff"><img src="./image/RackA.png"></radio-button>
-		<radio-button value="Dagger,Bow,Wand,Gun,Crossbow,Shield"><img src="./image/RackB.png"></radio-button>
-		<radio-button value="Helmet,Rogue Hat,Magician Hat"><img src="./image/RackC.png"><img src="./image/RackCH.png"></radio-button>
-		<radio-button value="Heavy Armor,Light Armor,Clothes"><img src="./image/RackC.png"><img src="./image/RackCB.png"></radio-button>
-		<radio-button value="Gauntlets,Gloves,Heavy Footwear,Light Footwear"><img src="./image/RackC.png"><img src="./image/RackCO.png"></radio-button>
-		<radio-button value="Herbal Medicine,Potion,Spell,Ring,Amulet"><img src="./image/RackD.png"></radio-button>
-	</toggle-button>
-
-	<div class="message">枠外をクリックすると閉じます</div>
-</div>
-</navi>
-</div>
--->
-
 <div class="targetView viewItem">
-<div class="targetFormat formatStatus formatSell formatGemSell formatBuy formatEnchant">
 <footer>
-<div class="showHover mt5">
-<div>表示条件変更</div>
 <div class="mb5">
 <toggle-button id="filterTier" class="changeList">
 	<reset-button checked>全選択</reset-button>
@@ -313,64 +257,16 @@
 	<check-button value="11">11</check-button>
 </toggle-button>
 </div>
-<div class="mb5">
-<toggle-button id="filterJob" class="changeList">
-	<reset-button class="gray" title="絞り込みなし" checked>*</reset-button>
-	<radio-button class="red" value="Sword,Mace,Dagger,Heavy Armor,Gauntlets,Heavy Footwear,Potion,Shield" title="Sword,Mace,Dagger&#0010Heavy Armor&#0010Gauntlets&#0010Heavy Footwear&#0010Potion&#0010Shield">ソルジャー<br>(マーセナリー)</radio-button>
-	<radio-button class="red" value="Sword,Mace,Dagger,Spear,Heavy Armor,Gauntlets,Heavy Footwear,Potion,Shield" title="Sword,Mace,Dagger,Spear&#0010Heavy Armor&#0010Gauntlets&#0010Heavy Footwear&#0010Potion&#0010Shield">(ソルジャー)<br>マーセナリー</radio-button>
-	<radio-button class="red" value="Sword,Axe,Spear,Mace,Helmet,Gauntlets,Heavy Footwear,Potion,Herbal Medicine" title="Sword,Axe,Spear,Mace&#0010Helmet&#0010Gauntlets&#0010Heavy Footwear&#0010Potion&#0010Herbal Medicine">バーバリアン<br>(族長)</radio-button>
-	<radio-button class="red" value="Sword,Axe,Spear,Mace,Helmet,Gauntlets,Heavy Footwear,Potion,Herbal Medicine,Shield" title="Sword,Axe,Spear,Mace&#0010Helmet&#0010Gauntlets&#0010Heavy Footwear&#0010Potion&#0010Herbal Medicine,Shield">(バーバリアン)<br>族長</radio-button>
-	<radio-button class="red" value="" title="">ナイト<br>(ロード)</radio-button>
-	<radio-button class="red" value="" title="">(ナイト)<br>ロード</radio-button>
-	<radio-button class="red" value="" title="">レンジャー<br>ウォーデン</radio-button>
-	<radio-button class="red" value="" title="">サムライ<br>ダイミョウ</radio-button>
-	<radio-button class="red" value="" title="">狂戦士<br>(ヤール)</radio-button>
-	<radio-button class="red" value="" title="">(狂戦士)<br>ヤール</radio-button>
-
-	<radio-button class="green" value="" title="">シーフ<br>(トリックスター)</radio-button>
-	<radio-button class="green" value="" title="">(シーフ)<br>トリックスター</radio-button>
-	<radio-button class="green" value="" title="">モンク<br>グランドマスター</radio-button>
-	<radio-button class="green" value="" title="">銃士<br>(コンキスタドール)</radio-button>
-	<radio-button class="green" value="" title="">(銃士)<br>コンキスタドール</radio-button>
-	<radio-button class="green" value="Axe,Dagger,Gun,Light Armor,Rogue Hat,Gloves,Herbal Medicine,Amulet" title="Axe,Dagger,Gun&#0010Light Armor&#0010Rogue Hat&#0010Gloves&#0010Herbal Medicine&#0010Amulet">ワンダラー<br>パスファインダー</radio-button>
-	<radio-button class="green" value="Sword,Dagger,Bow,Light Armor,Rogue Hat,Gloves,Light Footwear,Ring" title="">忍者<br>センセイ</radio-button>
-	<radio-button class="green" value="Dagger,Bow,Wand,Crossbow,Light Armor,Rogue Hat,Gloves,Light Footwear,Ring,Amulet" title="">踊り子<br>軽業師</radio-button>
-
-	<radio-button class="blue" value="Wand,Staff,Crossbow,Clothes,Magician Hat,Light Footwear,Spell,Ring" title="Wand,Staff,Crossbow&#0010Clothes&#0010Magician Hat&#0010Light Footwear&#0010Spell&#0010Ring">メイジ<br>アークメイジ</radio-button>
-	<radio-button class="blue" value="Mace,Spear,Wand,Clothes,Magician Hat,Light Footwear,Spell,Shield, title="Mace,Spear,Wand&#0010Clothes&#0010Magician Hat&#0010Light Footwear&#0010Spell&#0010Shield">クレリック<br>(ビショップ)</radio-button>
-	<radio-button class="blue" value="Mace,Spear,Wand,Clothes,Magician Hat,Light Footwear,Spell,Shield,Ring" title="Mace,Spear,Wand&#0010Clothes&#0010Magician Hat&#0010Light Footwear&#0010Spell&#0010Shield,Ring">(クレリック)<br>ビショップ</radio-button>
-	<radio-button class="blue" value="Bow,Wand,Staff,Clothes,Herbal Medicine,Amulet,Spell" title="Bow,Wand,Staff&#0010Clothes&#0010Herbal Medicine&#0010Herbal Medicine&#0010Amulet&#0010Spell">ドルイド<br>(アークドルイド)</radio-button>
-	<radio-button class="blue" value="Bow,Wand,Staff,Clothes,Herbal Medicine,Amulet,Ring,Spell" title="Bow,Wand,Staff&#0010Clothes&#0010Herbal Medicine&#0010Herbal Medicine&#0010Amulet,Ring&#0010Spell">(ドルイド)<br>アークドルイド</radio-button>
-	<radio-button class="blue" value="Dagger,Wand,Staff,Clothes,Gloves,Light Footwear,Spell" title="Dagger,Wand,Staff&#0010Clothes&#0010Gloves&#0010Light Footwear&#0010Spell&#0010Spell">ソーサラー<br>ウォーロック</radio-button>
-	<radio-button class="blue" value="Sword,Axe,Bow,Staff,Heavy Armor,Light Armor,Clothes,Helmet,Magician Hat,Gauntlets,Gloves,Heavy Footwear,Light Footwear,Potion,Spell,Ring,Amulet,Herbal Medicine,Shield,Spell" title="Sword,Axe,Bow,Staff&#0010Heavy Armor,Light Armor,Clothes&#0010Helmet,Magician Hat,Gauntlets,Gloves&#0010Heavy Footwear,Light Footwear&#0010Potion,Spell,Ring,Amulet&#0010Herbal Medicine,Shield,Spell,Ring,Amulet">スペルブレイド<br>スペルナイト</radio-button>
-	<radio-button class="blue" value="Mace,Wand,Staff,Clothes,Magician Hat,Gloves,Spell,Herbal Medicine,Shield" title="Mace,Wand,Staff&#0010Clothes&#0010Magician Hat&#0010Gloves&#0010Spell&#0010Herbal Medicine,Shield">風水師<br>アストラマンサー</radio-button>
+<div class="">
+<toggle-button id="filterRack" class="changeList">
+	<reset-button checked>全選択</reset-button>
+	<radio-button value="Sword,Axe,Mace,Spear,Staff">縦置きラック</radio-button>
+	<radio-button value="Dagger,Bow,Wand,Gun,Crossbow,Shield">テーブル</radio-button>
+	<radio-button value="Helmet,Rogue Hat,Magician Hat">マネキン(頭)</radio-button>
+	<radio-button value="Heavy Armor,Light Armor,Clothes">マネキン(胴)</radio-button>
+	<radio-button value="Gauntlets,Gloves,Heavy Footwear,Light Footwear">マネキン(手足)</radio-button>
+	<radio-button value="Herbal Medicine,Potion,Spell,Ring,Amulet">棚</radio-button>
 </toggle-button>
-</div>
-<div class="mb5">
-<toggle-button id="filterRack" class="changeList" format="icon">
-	<reset-button checked><img src="./image/All.png"></reset-button>
-	<radio-button value="Sword,Axe,Mace,Spear,Staff"><img src="./image/RackA.png"></radio-button>
-	<radio-button value="Dagger,Bow,Wand,Gun,Crossbow,Shield"><img src="./image/RackB.png"></radio-button>
-	<radio-button value="Helmet,Rogue Hat,Magician Hat"><img src="./image/RackC.png"><img src="./image/RackCH.png"></radio-button>
-	<radio-button value="Heavy Armor,Light Armor,Clothes"><img src="./image/RackC.png"><img src="./image/RackCB.png"></radio-button>
-	<radio-button value="Gauntlets,Gloves,Heavy Footwear,Light Footwear"><img src="./image/RackC.png"><img src="./image/RackCO.png"></radio-button>
-	<radio-button value="Herbal Medicine,Potion,Spell,Ring,Amulet"><img src="./image/RackD.png"></radio-button>
-</toggle-button>
-</div>
-</div>
-
-<div id="showFilterTier" is="show-filter" select="">
-	<span class="1">１</span>
-	<span class="2">２</span>
-	<span class="3">３</span>
-	<span class="4">４</span>
-	<span class="5">５</span>
-	<span class="6">６</span>
-	<span class="7">７</span>
-	<span class="8">８</span>
-	<span class="9">９</span>
-	<span class="10">10</span>
-	<span class="11">11</span>
 </div>
 <div id="showFilterType" is="show-filter" select="">
 	<img src="./image/Sword.png" class="Sword">
@@ -401,7 +297,6 @@
 	<img src="./image/Amulet.png" class="Amulet">
 </div>
 </footer>
-</div>
 </div>
 
 <div class="loading">Now Loading...</div>
