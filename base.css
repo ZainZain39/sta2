@@ -1,4 +1,3 @@
-@charset "UTF-8";
 :root {
 	--main-bg-color: #25151e;
 	--main-color: #fff;
@@ -161,7 +160,7 @@ select, [type] {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	content: "£";
+	content: "▲";
 	width: 35px;
 	height: 35px;
 	z-index: -1;
