@@ -27,7 +27,7 @@ const setupData = async () => {
 	const init_para = [
 		["MaxEnergy", "3,000"],
 		["DiscountThreshold", "500"],
-		["SurchargeThreshold", "800"],
+		["SurchargeThreshold", "700"],
 	];
 	const dbconfig1 = new DbConfig().setStore("para");
 	myApp.ParaDbMap = await new DbMap(init_para).setDbConfig(dbconfig1);
