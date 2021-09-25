@@ -44,6 +44,10 @@ class GroupList extends HTMLElement {
 			e.addEventListener("change", changeCheckType)
 		});
 
+		this.root.querySelectorAll(".clickRate").forEach(e => {
+			e.addEventListener("click", changeRate);
+		});
+
 		const item_count = this.root.querySelectorAll(".item").length;
 		this.classList.toggle("reject", item_count == 0);
 	}
@@ -80,7 +84,7 @@ class GroupList extends HTMLElement {
 					<span class="hsell">推奨販売方法</span>
 				</div>
 			`,
-			formatGemSell: `
+			formatMarket: `
 				<div class="header">
 					<span>${LcalGroup}</span>
 				</div>
@@ -89,21 +93,7 @@ class GroupList extends HTMLElement {
 					<span class="hname">アイテム名</span>
 					<span class="hvalue">追加販売価格</span>
 					<span class="hvalue">追加販売コスト</span>
-					<span class="hvalue">純利益</span>
-					<span class="hvalue">推奨ゴールド価格</span>
-					<span class="hvalue">推奨ジェム価格</span>
-				</div>
-			`,
-			formatBuy: `
-				<div class="header">
-					<span>${LcalGroup}</span>
-				</div>
-				<div class="title">
-					<span class="htier"></span>
-					<span class="hname">アイテム名</span>
-					<span class="hvalue">追加販売価格</span>
-					<span class="hvalue">追加販売コスト</span>
-					<span class="hvalue">推奨仕入れ値</span>
+					<span class="hvalue">推奨仕入価格</span>
 				</div>
 			`,
 			formatEnchantment: `
@@ -114,8 +104,10 @@ class GroupList extends HTMLElement {
 					<span class="htier"></span>
 					<span class="hname">アイテム名</span>
 					<span class="hvalue">エンチャント前</span>
-					<span class="hvalue">エンチャント後</span>
 					<span class="hvalue">増加額</span>
+					<span class="hvalue">エンチャント後</span>
+					<span class="hvalue">追加販売価格</span>
+					<span class="hcost">還元率</span>
 				</div>
 			`,
 			formatCheckItem: `
@@ -151,11 +143,10 @@ class GroupList extends HTMLElement {
 	}
 	createItem(key) {
 		const func = {
-			formatStatus: this.createItem_formatStatus,
 			formatSell: this.createItem_formatSell,
-			formatGemSell: this.createItem_formatGemSell,
-			formatBuy: this.createItem_formatBuy,
+			formatMarket: this.createItem_formatMarket,
 			formatEnchantment: this.createItem_formatEnchantment,
+			formatStatus: this.createItem_formatStatus,
 			formatCheckItem: this.createItem_formatCheckItem,
 			formatCheckType: this.createItem_formatCheckType,
 			formatXXX: this.createItem_formatXXX,
@@ -186,19 +177,24 @@ class GroupList extends HTMLElement {
 		return tmplate.content;
 	}
 	createItem_formatSell(key) {
-		const AllValueUp = [...myApp.CheckTypeDbMap].filter(([k, v]) => v.AllValueUp).length;
 		const sMaxEnergy = $MaxEnergy.value;
 		const sDiscountThreshold = $DiscountThreshold.value;
 		const sSurchargeThreshold = $SurchargeThreshold.value;
 		const [MaxEnergy, DiscountThreshold, SurchargeThreshold] = String2Number(sMaxEnergy, sDiscountThreshold, sSurchargeThreshold);
-
 		const qarity = switchQuality.value[0];
 
 		const item = myApp.ItemMap.get(key);
 		const sell = ["－", "－", "－", "－", "－"];
+		const DiscountCost = [];
+		const SurchargeValue = [];
+		const SurchargeCost = [];
 		sell.forEach((_,i) => {
-			if(item.DiscountCost[i] <= DiscountThreshold) sell[i] = "半";
-			if(item.SurchargeCost[i] >= SurchargeThreshold && item.NowSurchargeEnergy <= MaxEnergy) sell[i] = "倍";
+			DiscountCost[i] = Math.floor(item.RoundNowValue[i] / 2 / item.DiscountEnergy);
+			SurchargeValue[i] = Math.floor((item.RoundNowValue[i] * (200 + myApp.AllValueUp + (item.CheckType.TypeValueUp ? 5 : 0)) / 100));
+			SurchargeCost[i] = Math.floor((SurchargeValue[i] - item.RoundNowValue[i]) / item.NowSurchargeEnergy);
+
+			if(DiscountCost[i] <= DiscountThreshold) sell[i] = "半";
+			if(SurchargeCost[i] >= SurchargeThreshold && item.NowSurchargeEnergy <= MaxEnergy) sell[i] = "倍";
 		});
 		const cssValue = item.CheckItem.ValueUp ? "value valueup" : "value";
 		const cssCost = item.CheckType.CostDown ? "energy costdown" : "energy";
@@ -210,10 +206,10 @@ class GroupList extends HTMLElement {
 				<span class="name">${item.LocalName}</span>
 				<span class="${cssValue}">${item.RoundNowValue[qarity]}</span>
 				<span class="energy">${item.DiscountEnergy}</span>
-				<span class="cost">${item.DiscountCost[qarity]}</span>
-				<span class="value">${item.SurchargeValue[qarity]}</span>
+				<span class="cost">${DiscountCost[qarity]}</span>
+				<span class="value">${SurchargeValue[qarity]}</span>
 				<span class="${cssCost}">${item.NowSurchargeEnergy}</span>
-				<span class="cost">${item.SurchargeCost[qarity]}</span>
+				<span class="cost">${SurchargeCost[qarity]}</span>
 				<span class="sell quality0">${sell[0]}</span>
 				<span class="sell quality1">${sell[1]}</span>
 				<span class="sell quality2">${sell[2]}</span>
@@ -223,31 +219,29 @@ class GroupList extends HTMLElement {
 		`;
 		return tmplate.content;
 	}
-	createItem_formatGemSell(key) {
-		const AllValueUp = [...myApp.CheckTypeDbMap].filter(([k, v]) => v.AllValueUp).length;
+	createItem_formatMarket(key) {
 		const sMaxEnergy = $MaxEnergy.value;
 		const sDiscountThreshold = $DiscountThreshold.value;
 		const sSurchargeThreshold = $SurchargeThreshold.value;
 		const [MaxEnergy, DiscountThreshold, SurchargeThreshold] = String2Number(sMaxEnergy, sDiscountThreshold, sSurchargeThreshold);
-
 		const qarity = switchQuality.value[0];
 
 		const item = myApp.ItemMap.get(key);
-		const SurchargeCost = item.NowSurchargeEnergy * DiscountThreshold;
-		const gem = Math.ceil(Math.max(2, Math.max(0, item.SurchargeValue[qarity] - SurchargeCost) / 800000 / 0.8));
-		const getgem = Math.floor(gem * 0.8);
+		const DiscountCost = Math.floor(item.RoundNowValue[qarity] / 2 / item.DiscountEnergy);
+		const SurchargeValue = Math.floor((item.RoundNowValue[qarity] * (200 + myApp.AllValueUp + (item.CheckType.TypeValueUp ? 5 : 0)) / 100));
+		const SurchargeCost = Math.floor((SurchargeValue - item.RoundNowValue[qarity]) / item.NowSurchargeEnergy);
+		const Cost = item.NowSurchargeEnergy * sDiscountThreshold;
+		const BuyValue = SurchargeValue - Cost;
 
 		const tmplate = document.createElement("template");
-//		if(item.SurchargeValue[qarity] - SurchargeCost <= 0) return tmplate.content;
+		if(!(SurchargeCost >= SurchargeThreshold && item.NowSurchargeEnergy <= MaxEnergy)) return tmplate.content;
 		tmplate.innerHTML = tagLocalNumber`
-			<div class="item" title="${item.LocalName}">
+			<div class="item clickRate" title="${item.LocalName}" data-value="${BuyValue}">
 				<span class="tier">${item.Tier}</span>
 				<span class="name">${item.LocalName}</span>
-				<span class="value">${item.SurchargeValue[qarity]}</span>
-				<span class="value">${SurchargeCost}</span>
-				<span class="value">${item.SurchargeValue[qarity] - SurchargeCost}</span>
-				<span class="value">${Math.floor((item.SurchargeValue[qarity] - SurchargeCost) /0.9)}</span>
-				<span class="value">${gem}(${getgem})</span>
+				<span class="value">${SurchargeValue}</span>
+				<span class="value">${Cost}</span>
+				<span class="value">${BuyValue}</span>
 			</div>
 		`;
 		return tmplate.content;
@@ -255,56 +249,32 @@ class GroupList extends HTMLElement {
 	createItem_formatEnchantment(key) {
 		const sMaxEnergy = $MaxEnergy.value;
 		const sSurchargeThreshold = $SurchargeThreshold.value;
-		const [MaxEnergy, SurchargeThreshold] = String2Number(sMaxEnergy, sSurchargeThreshold);
 		const sElementValue = $ElementValue.value;
 		const sSpiritValue = $SpiritValue.value;
-		const [ElementValue, SpiritValue] = String2Number(sElementValue, sSpiritValue);
+		const [MaxEnergy, SurchargeThreshold, ElementValue, SpiritValue] = String2Number(sMaxEnergy, sSurchargeThreshold, sElementValue, sSpiritValue);
+		const qarity = switchQuality.value[0];
 
 		const item = myApp.ItemMap.get(key);
-
-		const qarity = switchQuality.value[0];
 		const tmplate = document.createElement("template");
 		if(ElementValue != 0 && item.EnchantedE) return tmplate.content;
 		if(SpiritValue != 0 && item.EnchantedS) return tmplate.content;
-		if(!(item.SurchargeCost[qarity] >= SurchargeThreshold && item.NowSurchargeEnergy <= MaxEnergy)) return tmplate.content;
+		if(item.NowSurchargeEnergy > MaxEnergy) return tmplate.content;
 
-		const RoundEnchantValue = RoundValue(item.NowValue[qarity] + Math.min(item.NowValue[qarity], ElementValue) + Math.min(item.NowValue[qarity], SpiritValue));
-		const DiffValue = RoundEnchantValue - item.RoundNowValue[qarity];
-
+		const RoundNowValue = RoundValue(item.NowValue[0] * ValueWeight[qarity] / 100);
+		const RoundEnchantValue = RoundValue((item.NowValue[0] + Math.min(item.NowValue[0], ElementValue) + Math.min(item.NowValue[0], SpiritValue)) * ValueWeight[qarity] / 100);
+		const DiffValue = RoundEnchantValue - RoundNowValue;
+		const SurchargeValue = Math.floor((RoundEnchantValue * (200 + myApp.AllValueUp + (item.CheckType.TypeValueUp ? 5 : 0)) / 100));
+		const SurchargeCost = Math.floor((SurchargeValue- RoundNowValue) / item.NowSurchargeEnergy);
+		if(SurchargeCost < SurchargeThreshold) return tmplate.content;
 		tmplate.innerHTML = tagLocalNumber`
 			<div class="item" title="${item.LocalName}">
 				<span class="tier">${item.Tier}</span>
-				<span class="name" title="${item.LocalName}">${item.LocalName}</span>
-				<span class="value">${item.NowValue[qarity]}</span>
-				<span class="value">${RoundEnchantValue}</span>
+				<span class="name">${item.LocalName}</span>
+				<span class="value">${RoundNowValue}</span>
 				<span class="value">${DiffValue}</span>
-			</div>
-		`;
-		return tmplate.content;
-	}
-	createItem_formatBuy(key) {
-		const AllValueUp = [...myApp.CheckTypeDbMap].filter(([k, v]) => v.AllValueUp).length;
-		const sMaxEnergy = $MaxEnergy.value;
-		const sDiscountThreshold = $DiscountThreshold.value;
-		const sSurchargeThreshold = $SurchargeThreshold.value;
-		const [MaxEnergy, DiscountThreshold, SurchargeThreshold] = String2Number(sMaxEnergy, sDiscountThreshold, sSurchargeThreshold);
-
-		const item = myApp.ItemMap.get(key);
-
-		const qarity = switchQuality.value[0];
-		const CostValue = item.NowSurchargeEnergy * DiscountThreshold;
-		const BuyValue = item.SurchargeValue[qarity] - CostValue;
-		const tmplate = document.createElement("template");
-
-		if(!(item.SurchargeCost[qarity] >= SurchargeThreshold && item.NowSurchargeEnergy <= MaxEnergy)) return tmplate.content;
-		if(BuyValue <= 0) return tmplate.content;
-		tmplate.innerHTML = tagLocalNumber`
-			<div class="item" title="${item.LocalName}">
-				<span class="tier">${item.Tier}</span>
-				<span class="name" title="${item.LocalName}">${item.LocalName}</span>
-				<span class="value">${item.SurchargeValue[qarity]}</span>
-				<span class="value">${CostValue}</span>
-				<span class="value">${BuyValue}</span>
+				<span class="value">${RoundEnchantValue}</span>
+				<span class="value">${SurchargeValue}</span>
+				<span class="cost">${SurchargeCost}</span>
 			</div>
 		`;
 		return tmplate.content;

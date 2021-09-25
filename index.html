@@ -2,13 +2,13 @@
 <html lang="ja">
 <head>
 <title>Shop Titans Assistant</title>
-<link rel="stylesheet" href="base.css">
-<script src="dbmap.js"></script>
-<script src="script.js"></script>
-<script src="item.js"></script>
-<script src="togglebutton.js"></script>
-<script src="grouplist.js"></script>
-<script src="showfilter.js"></script>
+<link rel="stylesheet" href="base.css?202109251700">
+<script src="dbmap.js?202109251700"></script>
+<script src="script.js?202109251700"></script>
+<script src="item.js?202109251700"></script>
+<script src="togglebutton.js?202109251700"></script>
+<script src="grouplist.js?202109251700"></script>
+<script src="showfilter.js?202109251700"></script>
 </head>
 
 <body>
@@ -26,11 +26,10 @@
 <div class="targetView viewItem">
 <div class="flex mt5">
 	<toggle-button id="selectFormat" class="changeFormat">
-		<radio-button value="formatStatus" checked>ステータス閲覧</radio-button>
-		<radio-button value="formatSell">販売補助</radio-button>
-		<radio-button value="formatGemSell">マーケット販売補助</radio-button>
-		<radio-button value="formatBuy">仕入補助</radio-button>
+		<radio-button value="formatSell" checked>販売補助</radio-button>
+		<radio-button value="formatMarket">マーケット売買補助</radio-button>
 		<radio-button value="formatEnchantment">エンチャント補助</radio-button>
+		<radio-button value="formatStatus">ステータス閲覧</radio-button>
 		<radio-button value="formatCheckItem">開発進捗管理</radio-button>
 	</toggle-button>
 </div>
@@ -40,9 +39,21 @@
 
 <main class="reject">
 
-<div class="targetView viewItem">
-<div class="targetFormat formatStatus formatSell formatGemSell formatBuy formatEnchantment">
+<div class="targetView viewItem targetFormat formatStatus formatSell formatMarket formatEnchantment">
 <div class="flex gap10 mb5">
+	<div class="targetFormat formatSell">
+	<div class="hint" title="価格、割引時の獲得エネルギー、追加販売時の消費エネルギーから、最適な販売方法を判定する機能&#0010推奨販売方法の背景色は品質を表し、[半]は割引、[倍]は追加販売、[－]はそのまま販売したほうがいいことを表す&#0010きちんと計算するために先に[開発進捗管理][進化進捗管理]で情報を入力してください&#0010品質の高いものはマーケットで高く売れるのでそのあたりは自己判断で&#0010&#0010[最大エネルギー]にはあなたのお店の最大エネルギを入力&#0010[割引コスト上限値]には普段割引しているアイテムのコストを入力&#0010[追加販売還元率下限値]には普段追加販売しているアイテムの還元率を入力&#0010&#0010計算式&#0010　コスト＝（価格÷２）÷割引時獲得エネルギー　　※要するに１エネルギーを獲得するのに支払うゴールド&#0010　還元率＝追加販売価格÷追加販売消費エネルギー　※要するに１エネルギーで獲得するゴールド&#0010&#0010コストの少ない低ティアを割引し、稼いだエネルギーで還元率の高い高ティアを追加販売することで儲ける&#0010開発状況にもよるがティア10は還元率が悪く儲からないので追加販売するべきではないことがわかる&#0010黄金製品は非常に還元率が良いので、追加販売できるだけ最大エネルギーを高め、価格アップまで達成してから売り始めるのが儲けるコツ&#0010&#0010エレメントタイタンなどを取得すると「全アイテムの追加料金の値+1%」と説明されているがゲーム側が正しく1%を計算できていない&#0010多少誤差がありますがご了承ください">？</div>
+	</div>
+	<div class="targetFormat formatMarket">
+	<div class="hint" title="マーケットで売買するならいくらで取引すれば得か判定してくれる機能&#0010暫定的に追加販売するものだけを一覧表示&#0010&#0010仕入れの場合&#0010追加販売するにはエネルギーが必要&#0010なので必要エネルギー×エネルギーを貯めるためのコスト（＝割引コスト上限値）で追加販売コストを算出&#0010追加販売価格からコストを引いたものが純利益となり推奨仕入価格となる計算&#0010一覧の推奨仕入価格以下でマーケットから仕入れることができれば得となる&#0010黄金製品や高ティア品で安く売られているものを見つけよう&#0010&#0010販売の場合&#0010販売する場合はエネルギーが必要ないので手取りが純利益以上になるように売れるなら結果的に得となる&#0010マーケット取引には手数料が必要となるので手取りから提示額を算出（ゴールド売りなら10%、ジェム売りなら20%）&#0010これ以上で売れるなら得となる&#0010高品質品など思わぬ高値で売れるのでチェックしてみよう&#0010&#0010要注意！&#0010マーケット販売は商人経験値が入手できないという大きなデメリットがある&#0010ご利用は計画的に">？</div>
+	</div>
+	<div class="targetFormat formatEnchantment">
+	<div class="hint" title="エンチャント後の価格を可視化する機能&#0010&#0010ティア9アイテムにティア9のエレメントと精霊つけたら通常+70万となるが、元値によって増えたり減ったりするアレを事前にチェック">？</div>
+	</div>
+	<div class="targetFormat formatStatus">
+	<div class="hint" title="ヒーローの装備をグレードアップする際などの「回避付き装備って何があったっけ？」を解決する機能&#0010回避装備探すなら右の切替ボタンで[EVA]を選択といった感じで使用&#0010&#0010そのうちエンチャントによるステータス変化にも対応したいなぁ">？</div>
+	</div>
+
 	<toggle-button id="switchQuality" class="changeList">
 		<radio-button class="quality0" value="0" checked>普通</radio-button>
 		<radio-button class="quality1" value="1">上級</radio-button>
@@ -62,19 +73,20 @@
 	</toggle-button>
 	</div>
 
-	<div class="targetFormat formatSell formatGemSell formatBuy formatEnchantment">
+<!--
+	<div class="targetFormat formatSell formatMarket formatEnchantment">
 	<toggle-button id="switchEvent" class="changeList">
 		<radio-button value="event0" checked>イベントなし</radio-button>
 		<radio-button value="event1">お買い得 追加料金 +25%</radio-button>
 		<radio-button value="event2">値切り 消費エネルギー -25%</radio-button>
 	</toggle-button>
 	</div>
-</div>
+-->
 </div>
 </div>
 
 <div class="targetView viewItem">
-<div class="targetFormat formatSell formatGemSell formatBuy formatEnchantment">
+<div class="targetFormat formatSell formatMarket formatEnchantment">
 <div class="flex gap10 mb5">
 	<label>
 		<span class="info">最大エネルギー：</span>
@@ -90,10 +102,55 @@
 	</label>
 </div>
 </div>
+<div class="targetFormat formatMarket">
+<div class="flex gap10">
+	<div class="center">
+		<span>換算率：</span>
+	</div>
+	<label>
+		<input type="text" id="$Rate" class="changeRate" size="10" value="800,000">
+		<span>ゴールド　⇔　１ジェム換算</span>
+	</label>
+</div>
+<div class="flex gap10">
+	<div class="center">
+		<span>手取り：</span>
+	</div>
+	<label>
+		<input type="text" id="$gold" class="changeRate" size="10" value="0">
+		<span>ゴールド</span>
+	</label>
+	<div class="center">
+		<span>⇔</span>
+	</div>
+	<label>
+		<input type="text" id="$gem" class="changeRate" size="5" value="0">
+		<span>ジェム</span>
+	</label>
+</div>
+<div class="flex gap10 mb5">
+	<div class="center">
+		<span>提示額：</span>
+	</div>
+	<label>
+		<input type="text" id="$getgold" class="changeRate" size="10" value="0">
+		<span>ゴールド</span>
+	</label>
+	<div class="center">
+		<span>⇔</span>
+	</div>
+	<label>
+		<input type="text" id="$getgem" class="changeRate" size="5" value="0">
+		<span class="info">ジェム</span>
+	</label>
+	<div class="center">
+		<span>※下の一覧から売りたいものをクリック</span>
+	</div>
+</div>
+</div>
 </div>
 
-<div class="targetView viewItem">
-<div class="targetFormat formatEnchantment">
+<div class="targetView viewItem targetFormat formatEnchantment">
 <div class="flex gap10 mb5">
 	<label>
 		<span class="info">エレメント付与：</span>
@@ -135,83 +192,9 @@
 	</label>
 </div>
 </div>
-</div>
 
 <div class="targetView viewItem">
 	<div id="$viewItem" class="flex gap10"></div>
-	<div class="targetFormat formatStatus">
-		<div class="information">
-		ヒーローの装備をグレードアップする際に「防御付きの剣って何があったっけ？」などの悩みを解消する機能<br>
-		エンチャント後のステータスも表示できるようにしたい<br>
-		</div>
-	</div>
-	<div class="targetFormat formatSell">
-		<div class="information">
-		販売価格と割引時の獲得エネルギー、追加販売時の消費エネルギーから、アイテムをどう販売するのが得か判定する機能<br>
-		推奨販売方法の欄の背景色は品質を表し、"半"は割引推奨、"倍"は追加販売推奨を表す<br>
-		ただし品質が上がればマーケット販売したほうが良いこともあるのでその辺は自己判断でお願いします<br>
-		（私は商人レベル上げのため基本的にはNPC販売で、ジェムになりそうなものだけマーケット販売してます）<br>
-		<br>
-		きちんと計算させるために先に[開発進捗管理][進化進捗管理]で情報を入力してください<br>
-		[最大エネルギー]にはあなたのお店の最大エネルギを入力<br>
-		[割引コスト上限値]には普段割引しているアイテムのコストを入力<br>
-		[追加販売還元率下限値]には普段追加販売しているアイテムの還元率を入力<br>
-		<br>
-		計算式<br>
-		　コスト＝（価格÷２）÷割引時獲得エネルギー　　※要するに１エネルギーを獲得するのに支払うゴールド<br>
-		　還元率＝追加販売価格÷追加販売消費エネルギー　※要するに１エネルギーで獲得するゴールド<br>
-		<br>
-		一覧を見ればティア10は還元率が悪く儲からないので追加販売するべきではないことがわかる<br>
-		なお黄金製品は非常に還元率が良いので、追加販売できるだけ最大エネルギーを高め、価格アップまで開発を頑張ってから売るのが儲けるコツ<br>
-		<br>
-		注意というか言い訳<br>
-		ゲーム内ではエレメントタイタンなどを取得すると「全アイテムの追加料金の値＋１％」と説明されているが、計算値とゲーム値が一致しない<br>
-		公式サイトのスプレッドシートに正しく計算する元ネタもないため多少誤差がありますがご了承ください<br>
-		</div>
-	</div>
-	<div class="targetFormat formatGemSell">
-		<div class="information">
-		アイテムをマーケットで売るならいくらで売れば得か判定してくれる機能<br>
-		<br>
-		基本となるのは追加販売の価格で、それから追加販売コストを引いたものが純利益となる<br>
-		追加販売コスト＝追加販売エネルギー×エネルギーを貯めるために使用したコストなので下記の計算式となる<br>
-		<br>
-		計算式<br>
-		Ａ：追加販売価格－（追加販売エネルギー×割引コスト）＝NPC販売の純利益<br>
-		<br>
-		マーケットでゴールド売りする場合は手取りがＡ以上ならば得ということになる<br>
-		ジェム売りする場合は純利益を下記の計算式でジェム換算する<br>
-		<br>
-		計算式<br>
-		Ｂ：Ａ÷ジェムゴールド換算率＝ジェム換算した純利益<br>
-		<br>
-		例えば上質なボーパルの剣をNPCに売る場合、追加販売価格700万から追加販売コスト100万程度を引いたおよそ600万が純利益となる<br>
-		※価格アップおよび剣ラーナー取得を想定<br>
-		マーケットでゴールド販売するなら手数料10%を考慮して670万以上で売れば儲けとなり、ジェム販売なら600万÷80万＝7.5で繰り上げて8ジェムを手数料20%考慮の10ジェムで売れれば儲けとなる<br>
-		（マーケット掲示期間を長くすると手数料率も上がるので要注意）<br>
-		（他者リクエストへの応答であれば手数料不要なので600万または8ジェムで売ればよい）<br>
-		<br>
-		た　だ　し　！<br>
-		マーケット販売には商人経験値が入手できないという大きなデメリットがあるので注意<br>
-		このゲームは"商人レベル イズ パワー"であり"ジェム イズ パワー"でもある<br>
-		大いに悩もう<br>
-		<br>
-		以下は独り言<br>
-		低ティア品は割引販売でエネルギーにするのが定石なので、そのあたりを考慮した一覧になるよう検討中<br>
-		わざわざエネルギー品を買わなくても自作すれば良いだけなので一覧から除外するか価格を非表示にするか…<br>
-		</div>
-	</div>
-	<div class="targetFormat formatEnchantment">
-		<div class="information">
-		エンチャント後の価格はどれも同じではなく、価格に対し丸め処理が入るのでそれを可視化する機能<br>
-		（高ティア品に低ティアエンチャすると価格上昇なくなったりする）<br>
-		<br>
-		以下は独り言<br>
-		今はエンチャント前の状態で追加販売対象品だけリストアップされてる<br>
-		エンチャント後の状態で追加販売対象となるものも表示されるように修正したいところ<br>
-		前のバージョンみたいにプラスマイナス表記で文字色変えたいけどいじり過ぎてこんな簡単な修正もできてない…<br>
-		</div>
-	</div>
 </div>
 
 <div class="targetView viewCheckType">
@@ -229,12 +212,9 @@
 <div class="targetView viewInformation">
 	<div class="information">
 	2021/09/24 機能見直しおよび内部処理大幅改造<br>
+	2021/09/25 機能説明を？ボタンに移動（カーソルを合わせてみてね）<br>
 	<br>
-	とりあえず見た目のイメージだけできたのでアップ<br>
-	それなりに動くけどタイプ別価格アップの対応やらイベント対応やらが未実装なので値は信用しないでね<br>
-	<br>
-	寄付状況管理機能はゲームインタフェースの改善によりお役御免かなと削除してみた<br>
-	実験的に計算値の根拠も表示するようにしてみた<br>
+	9/25に計算値は正しくなるようにしたはずなので、あってないもの見つけたら報告してくれると助かります<br>
 	</div>
 </div>
 </main>

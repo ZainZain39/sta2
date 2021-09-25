@@ -180,6 +180,23 @@ footer:hover >.showHover {
 	margin-top: 10px;
 	padding: 5px 10px;
 }
+.hint {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 5px 10px;
+	background: #ff0;
+	color: #fff;
+	cursor: pointer;
+	font-weight: bold;
+	border-radius: 5px;
+	text-shadow: 0px 0px 2px #000;
+}
+.center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 
 .reject {
 	display: none;

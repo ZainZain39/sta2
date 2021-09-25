@@ -48,6 +48,7 @@ const setupData = async () => {
 	}
 	const dbconfig3 = new DbConfig().setStore("CheckType").setInit(init_checktype);
 	myApp.CheckTypeDbMap = await new DbMap().setDbConfig(dbconfig3);
+	myApp.AllValueUp = [...myApp.CheckTypeDbMap].filter(([k, v]) => v.AllValueUp).length;
 
 	myApp.ItemMap = new Map();
 	myApp.LocalStringMap = new Map(convEntries(LocalString));
@@ -72,11 +73,11 @@ class ItemObject {
 	get NowValue() {
 		const temp = this.CheckItem.ValueUp ? this.IncreaseValue : this.Value;
 		return [
-			temp * ValueWeight[0],
-			temp * ValueWeight[1],
-			temp * ValueWeight[2],
-			temp * ValueWeight[3],
-			temp * ValueWeight[4],
+			temp * ValueWeight[0] / 100,
+			temp * ValueWeight[1] / 100,
+			temp * ValueWeight[2] / 100,
+			temp * ValueWeight[3] / 100,
+			temp * ValueWeight[4] / 100,
 		];
 	}
 	get RoundNowValue() {
@@ -88,64 +89,64 @@ class ItemObject {
 			RoundValue(this.NowValue[4]),
 		];
 	}
-	get DiscountCost() {
-		return [
-			Math.floor(this.RoundNowValue[0] / 2 / this.DiscountEnergy),
-			Math.floor(this.RoundNowValue[1] / 2 / this.DiscountEnergy),
-			Math.floor(this.RoundNowValue[2] / 2 / this.DiscountEnergy),
-			Math.floor(this.RoundNowValue[3] / 2 / this.DiscountEnergy),
-			Math.floor(this.RoundNowValue[4] / 2 / this.DiscountEnergy),
-		];
-	}
-	get SurchargeValue() {
-		return [
-			this.RoundNowValue[0] * 2,
-			this.RoundNowValue[1] * 2,
-			this.RoundNowValue[2] * 2,
-			this.RoundNowValue[3] * 2,
-			this.RoundNowValue[4] * 2,
-		];
-	}
+//	get DiscountCost() {
+//		return [
+//			Math.floor(this.RoundNowValue[0] / 2 / this.DiscountEnergy),
+//			Math.floor(this.RoundNowValue[1] / 2 / this.DiscountEnergy),
+//			Math.floor(this.RoundNowValue[2] / 2 / this.DiscountEnergy),
+//			Math.floor(this.RoundNowValue[3] / 2 / this.DiscountEnergy),
+//			Math.floor(this.RoundNowValue[4] / 2 / this.DiscountEnergy),
+//		];
+//	}
+//	get SurchargeValue() {
+//		return [
+//			this.RoundNowValue[0] * 2,
+//			this.RoundNowValue[1] * 2,
+//			this.RoundNowValue[2] * 2,
+//			this.RoundNowValue[3] * 2,
+//			this.RoundNowValue[4] * 2,
+//		];
+//	}
 	get NowSurchargeEnergy() {
 		return this.CheckType.CostDown ? this.SurchargeEnergyCD : this.SurchargeEnergy;
 	}
-	get SurchargeCost() {
-		return [
-			Math.floor(this.RoundNowValue[0] / this.NowSurchargeEnergy),
-			Math.floor(this.RoundNowValue[1] / this.NowSurchargeEnergy),
-			Math.floor(this.RoundNowValue[2] / this.NowSurchargeEnergy),
-			Math.floor(this.RoundNowValue[3] / this.NowSurchargeEnergy),
-			Math.floor(this.RoundNowValue[4] / this.NowSurchargeEnergy),
-		];
-	}
+//	get SurchargeCost() {
+//		return [
+//			Math.floor(this.RoundNowValue[0] / this.NowSurchargeEnergy),
+//			Math.floor(this.RoundNowValue[1] / this.NowSurchargeEnergy),
+//			Math.floor(this.RoundNowValue[2] / this.NowSurchargeEnergy),
+//			Math.floor(this.RoundNowValue[3] / this.NowSurchargeEnergy),
+//			Math.floor(this.RoundNowValue[4] / this.NowSurchargeEnergy),
+//		];
+//	}
 	get getATK() {
 		if(!("ATK" in this)) return ["", "", "", "", ""];
 		return [
-			Math.round(this.ATK * StatusWeight[0]),
-			Math.round(this.ATK * StatusWeight[1]),
-			Math.round(this.ATK * StatusWeight[2]),
-			Math.round(this.ATK * StatusWeight[3]),
-			Math.round(this.ATK * StatusWeight[4]),
+			Math.round(this.ATK * StatusWeight[0] / 100),
+			Math.round(this.ATK * StatusWeight[1] / 100),
+			Math.round(this.ATK * StatusWeight[2] / 100),
+			Math.round(this.ATK * StatusWeight[3] / 100),
+			Math.round(this.ATK * StatusWeight[4] / 100),
 		];
 	}
 	get getDEF() {
 		if(!("DEF" in this)) return ["", "", "", "", ""];
 		return [
-			Math.round(this.DEF * StatusWeight[0]),
-			Math.round(this.DEF * StatusWeight[1]),
-			Math.round(this.DEF * StatusWeight[2]),
-			Math.round(this.DEF * StatusWeight[3]),
-			Math.round(this.DEF * StatusWeight[4]),
+			Math.round(this.DEF * StatusWeight[0] / 100),
+			Math.round(this.DEF * StatusWeight[1] / 100),
+			Math.round(this.DEF * StatusWeight[2] / 100),
+			Math.round(this.DEF * StatusWeight[3] / 100),
+			Math.round(this.DEF * StatusWeight[4] / 100),
 		];
 	}
 	get getHP() {
 		if(!("HP" in this)) return ["", "", "", "", ""];
 		return [
-			Math.round(this.HP * StatusWeight[0]),
-			Math.round(this.HP * StatusWeight[1]),
-			Math.round(this.HP * StatusWeight[2]),
-			Math.round(this.HP * StatusWeight[3]),
-			Math.round(this.HP * StatusWeight[4]),
+			Math.round(this.HP * StatusWeight[0] / 100),
+			Math.round(this.HP * StatusWeight[1] / 100),
+			Math.round(this.HP * StatusWeight[2] / 100),
+			Math.round(this.HP * StatusWeight[3] / 100),
+			Math.round(this.HP * StatusWeight[4] / 100),
 		];
 	}
 	get getEVA() {
@@ -202,8 +203,8 @@ const filterProp = (key, target) => v => equalConditions.includes(typeof target)
 const getProp = key => v => v[key];
 const String2Number = (...args) => args.map(s => Number(s.replaceAll(",", "")));
 
-const ValueWeight = [1, 1.25, 2, 3, 5];
-const StatusWeight = [1, 1.25, 1.5, 2, 3];
+const ValueWeight = [100, 125, 200, 300, 500];
+const StatusWeight = [100, 125, 150, 200, 300];
 const RoundValue = value => {
 	let                  x = 50000;
 	if(value <= 1000000) x =  5000;
@@ -332,10 +333,6 @@ const setEvent = () => {
 		});
 	});
 
-	const event = new CustomEvent("changed", {
-		bubbles: true,
-		composed: true,
-	});
 	filterTier.dispatchEvent(event);
 
 	document.querySelectorAll(".changeView").forEach(e => {
@@ -374,6 +371,11 @@ const setEvent = () => {
 	});
 }
 
+const event = new CustomEvent("changed", {
+	bubbles: true,
+	composed: true,
+});
+
 const changeCheckItem = async e => {
 	const me = e.currentTarget;
 	const {Name, key} = me.dataset;
@@ -388,6 +390,23 @@ const changeCheckType = async e => {
 	const checktype = myApp.CheckTypeDbMap.get(Name);
 	checktype[key] = me.checked;
 	await myApp.CheckTypeDbMap.set(Name, checktype);
+
+	if(key === "AllValueUp") myApp.AllValueUp = [...myApp.CheckTypeDbMap].filter(([k, v]) => v.AllValueUp).length;
+}
+
+const changeRate = e => {
+	const me = e.currentTarget;
+	const sGold = me.dataset.value;
+	const sRate = $Rate.value;
+	const [Gold, Rate] = String2Number(sGold, sRate);
+	const Gem = Math.ceil(Gold / Rate);
+	const GetGold = Math.ceil(Gold / 0.9);
+	const GetGem = Math.ceil(Gem / 0.8);
+
+	$gold.value = tagLocalNumber`${Gold}`;
+	$gem.value = tagLocalNumber`${Gem}`;
+	$getgold.value = tagLocalNumber`${GetGold}`;
+	$getgem.value = tagLocalNumber`${GetGem}`;
 }
 
 const EnchantedE = `
